@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="false" version="3">
+  <includeClasses>
+    <classEntry path="ext.swizframework.metadata.DeepLinkMetadataTag"/>
+    <classEntry path="ext.swizframework.processors.DeepLinkProcessor"/>
+    <classEntry path="ext.swizframework.processors.LogProcessor"/>
+    <classEntry path="ext.swizframework.utils.AsyncInterceptor"/>
+    <classEntry path="ext.swizframework.utils.SWFAddressManager"/>
+    <classEntry path="ext.swizframework.utils.logging.GlobalExceptionLogger"/>
+    <classEntry path="ext.swizframework.utils.logging.Logger"/>
+    <classEntry path="ext.swizframework.utils.logging.LoggerRegistry"/>
+    <classEntry path="org.osflash.thunderbolt.Logger"/>
+    <classEntry path="org.osflash.thunderbolt.ThunderBoltTarget"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests>
+    <namespaceManifestEntry manifest="manifest.xml" namespace="http://ext.swizframework.org"/>
+  </namespaceManifests>
+</flexLibProperties>

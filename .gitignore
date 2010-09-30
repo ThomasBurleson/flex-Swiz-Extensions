@@ -1,0 +1,13 @@
+
+/html-template/*
+/dist/*
+/docs/*
+
+.fxpProperties
+.sourceMate
+.sourceMateMetadataSettings
+
+Icon
+Thumbs.db
+.DS_Store
+

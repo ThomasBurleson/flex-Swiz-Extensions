@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<componentPackage>
+	
+	<!-- Custom Processors -->
+	<component class="ext.swizframework.processors.DeepLinkProcessor" />
+	<component class="ext.swizframework.processors.LogProcessor" />
+
+	<!-- MX Logging Utils -->
+	<component class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
+	<component class="ext.swizframework.utils.logging.Logger" />	
+	<component class="org.osflash.thunderbolt.ThunderBoltTarget" />
+
+	<!-- Custom Utilities -->
+	<component class="ext.swizframework.utils.AsyncInterceptor" />
+	<component class="ext.swizframework.utils.SWFAddressManager" />
+	
+	
+</componentPackage>
