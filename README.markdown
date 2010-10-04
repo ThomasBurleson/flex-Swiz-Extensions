@@ -2,10 +2,10 @@ This repository contains [customized extensions] for the [Swiz Framework](http:/
 
 Custom extension include the:
 
--  [[LogProcessor|MetadataProcessor:-LogProcessor]]:  versatile logging with optional output to FireBug
+- [LogProcessor](http://github.com/ThomasBurleson/swiz-extensions_2/wiki/MetadataProcessor%3A-LogProcessor):  versatile logging with optional output to FireBug
 - GlobalExceptionLogger: Autoinstall global exception handler for FP10 or greater apps.
 - DeepLinkProcessor: deeplinking using SWFAddress
-- [[AsyncInterceptor|DataServices: AsyncInterceptor]]:  dynamic async RPC response interception for data conversion
+- [AsyncInterceptor](http://github.com/ThomasBurleson/swiz-extensions_2/wiki/DataServices%3A-AsyncInterceptor):  dynamic async RPC response interception for data conversion
 
 Also includes modified (slightly) ThunderBoltAS3 classes for logging to FireBug console.
 
