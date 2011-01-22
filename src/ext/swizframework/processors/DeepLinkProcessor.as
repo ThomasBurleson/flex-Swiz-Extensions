@@ -12,7 +12,7 @@ package ext.swizframework.processors
 	
 	import org.swizframework.core.Bean;
 	import org.swizframework.core.ISwiz;
-	import org.swizframework.metadata.MediateMetadataTag;
+	import org.swizframework.metadata.EventHandlerMetadataTag;
 	import org.swizframework.processors.BaseMetadataProcessor;
 	import org.swizframework.reflection.ClassConstant;
 	import org.swizframework.reflection.Constant;
@@ -243,12 +243,14 @@ package ext.swizframework.processors
 		 */
 		protected function addMediate( deepLink:DeepLinkMetadataTag ):void
 		{
-			if ( deepLink.host.hasMetadataTagByName( "Mediate" ) )
-			{
-				var mediateTag : MediateMetadataTag = new MediateMetadataTag();
-				    mediateTag.copyFrom( deepLink.host.getMetadataTagByName( "Mediate" ) );
+			var srcTag : IMetadataTag = deepLink.host.getMetadataTagByName( "EventHandler" );
+				srcTag ||= deepLink.host.getMetadataTagByName( "Mediate" )
+					
+			if ( srcTag != null ) {
 				
-				logger.debug( "addMediate(event='{0}')", mediateTag.event );	
+				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag(srcTag);
+				
+					logger.debug( "addMediate(event='{0}')", mediateTag.event );	
 					
 				if( mediateTag.event.substr( -2 ) == ".*" )
 				{
@@ -274,11 +276,14 @@ package ext.swizframework.processors
 		 */
 		protected function removeMediate( deepLink:DeepLinkMetadataTag ):void
 		{
-			if ( deepLink.host.hasMetadataTagByName( "Mediate" ) ) {
-				var mediateTag : MediateMetadataTag = new MediateMetadataTag();
-					mediateTag.copyFrom( deepLink.host.getMetadataTagByName( "Mediate" ) );
+			var srcTag : IMetadataTag = deepLink.host.getMetadataTagByName( "EventHandler" );
+				srcTag ||= deepLink.host.getMetadataTagByName( "Mediate" )
+			
+			if ( srcTag != null ) {
+
+				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag(srcTag);
 				
-				logger.debug( "removeMediate(event='{0}')", mediateTag.event );
+					logger.debug( "removeMediate(event='{0}')", mediateTag.event );
 				
 				if( mediateTag.event.substr( -2 ) == ".*" ) {
 					var clazz:Class = ClassConstant.getClass(swiz.domain, mediateTag.event, swiz.config.eventPackages);

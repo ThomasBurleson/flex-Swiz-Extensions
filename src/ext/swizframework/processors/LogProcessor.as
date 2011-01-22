@@ -1,6 +1,7 @@
 package ext.swizframework.processors
 {
 	import ext.swizframework.utils.logging.GlobalExceptionLogger;
+	import ext.swizframework.utils.logging.LoggerRegistry;
 	
 	import flash.utils.getQualifiedClassName;
 	
@@ -14,7 +15,8 @@ package ext.swizframework.processors
 	import org.swizframework.processors.BaseMetadataProcessor;
 	import org.swizframework.processors.ProcessorPriority;
 	import org.swizframework.reflection.IMetadataTag;
-	import org.swizframework.utils.logging.LoggerRegistry;
+	
+	import ext.swizframework.utils.logging.LoggerRegistry;
 	
 	/**
 	 * This Metadata Tag processor supports the [Log] tag to inject a logger reference.
@@ -120,7 +122,7 @@ package ext.swizframework.processors
 		 * Set the processing priority so the [Log] processor runs BEFORE the [Inject] or [Mediate]
 		 */
 		override public function get priority():int {
-			return ProcessorPriority.INJECT - 10;
+			return ProcessorPriority.INJECT + 10;
 		}
 		
 		

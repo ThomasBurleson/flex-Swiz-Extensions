@@ -3,6 +3,7 @@
 	<name>Framework_Swiz_Extensions</name>
 	<comment></comment>
 	<projects>
+		<project>Framework_Swiz</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,9 +3,9 @@ package ext.swizframework.utils.logging
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	
-	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.logging.ILoggingTarget;
+	import mx.logging.LogLogger;
 	
 
 	public class LoggerRegistry
@@ -24,7 +24,7 @@ package ext.swizframework.utils.logging
 			// if the logger doesn't already exist, create and store it
 			if( logger == null )
 			{
-				if (LoggerClazz == null) LoggerClazz = Logger;
+				if (LoggerClazz == null) LoggerClazz = LogLogger;
 				logger = new LoggerClazz(className) as ILogger;
 				
 				if (logger != null) loggers[ className ] = logger;

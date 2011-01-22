@@ -12,7 +12,9 @@
     <classEntry path="org.osflash.thunderbolt.Logger"/>
     <classEntry path="org.osflash.thunderbolt.ThunderBoltTarget"/>
   </includeClasses>
-  <includeResources/>
+  <includeResources>
+    <resourceEntry destPath="manifest.xml" sourcePath="manifest.xml"/>
+  </includeResources>
   <namespaceManifests>
     <namespaceManifestEntry manifest="manifest.xml" namespace="http://ext.swizframework.org"/>
   </namespaceManifests>
