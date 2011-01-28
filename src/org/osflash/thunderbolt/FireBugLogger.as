@@ -28,7 +28,7 @@ package org.osflash.thunderbolt
 	* 
 	*/
 	
-	public class Logger
+	public class FireBugLogger
 	{
 		// constants
 		// Firebug supports 4 log levels only
@@ -67,11 +67,11 @@ package org.osflash.thunderbolt
 		public static function about():void
 	    {
 	        var message: String = 	"+++ Welcome to ThunderBolt AS3 | VERSION: " 
-	        						+ Logger.VERSION 
+	        						+ FireBugLogger.VERSION 
 	        						+ " | AUTHOR: " 
-	        						+ Logger.AUTHOR 
+	        						+ FireBugLogger.AUTHOR 
 	        						+ " | Happy logging +++";
-			Logger.info (message);
+			FireBugLogger.info (message);
 	    }
 	
 		/**
@@ -102,7 +102,7 @@ package org.osflash.thunderbolt
 		 */		
 		public static function info (msg: String = null, ...logObjects): void
 		{
-			Logger.log( Logger.INFO, msg, logObjects );			
+			FireBugLogger.log( FireBugLogger.INFO, msg, logObjects );			
 		}
 		
 		/**
@@ -114,7 +114,7 @@ package org.osflash.thunderbolt
 		 */		
 		public static function warn (msg: String = null, ...logObjects): void
 		{
-			Logger.log( Logger.WARN, msg, logObjects );			
+			FireBugLogger.log( FireBugLogger.WARN, msg, logObjects );			
 		}
 
 		/**
@@ -126,7 +126,7 @@ package org.osflash.thunderbolt
 		 */		
 		public static function error (msg: String = null, ...logObjects): void
 		{
-			Logger.log( Logger.ERROR, msg, logObjects );			
+			FireBugLogger.log( FireBugLogger.ERROR, msg, logObjects );			
 		}
 		
 		/**
@@ -138,7 +138,7 @@ package org.osflash.thunderbolt
 		 */		
 		public static function debug (msg: String = null, ...logObjects): void
 		{
-			Logger.log( Logger.LOG, msg, logObjects );			
+			FireBugLogger.log( FireBugLogger.LOG, msg, logObjects );			
 		}		
 			
 		/**
@@ -200,7 +200,7 @@ package org.osflash.thunderbolt
 			 	logMsg += msg;
 				
 			 	// send message	to the logging system
-			 	Logger.call( logMsg );
+			 	FireBugLogger.call( logMsg );
 	    			
 			 	// log objects	
 				if (logObjects != null)
@@ -208,7 +208,7 @@ package org.osflash.thunderbolt
 				 	var i: int = 0, l: int = logObjects.length;	 	
 					for (i = 0; i < l; i++) 
 					{
-			        	Logger.logObject(logObjects[i]);
+			        	FireBugLogger.logObject(logObjects[i]);
 			    	}					
 				}				
 			}
@@ -243,7 +243,7 @@ package org.osflash.thunderbolt
 		 */	
 		private static function logObject (logObj:*, id:String = null): void
 		{				
-			if ( _depth < Logger.MAX_DEPTH )
+			if ( _depth < FireBugLogger.MAX_DEPTH )
 			{
 				++ _depth;
 				
@@ -256,21 +256,21 @@ package org.osflash.thunderbolt
 					var msg: String = (propID.length) 	? 	"[" + type + "] " + propID + " = " + logObj
 														: 	"[" + type + "] " + logObj;
 															
-					Logger.call( msg );
+					FireBugLogger.call( msg );
 				}
 				else if (type == "Object")
 				{
-				  	Logger.callGroupAction( GROUP_START, "[Object] " + propID);
+				  	FireBugLogger.callGroupAction( GROUP_START, "[Object] " + propID);
 				  	
 				  	for (var element: String in logObj)
 				  	{
 					  	logObject(logObj[element], element);	
 				  	}
-					Logger.callGroupAction( GROUP_END );
+					FireBugLogger.callGroupAction( GROUP_END );
 				}
 				else if (type == "Array")
 				{
-				  	Logger.callGroupAction( GROUP_START, "[Array] " + propID );
+				  	FireBugLogger.callGroupAction( GROUP_START, "[Array] " + propID );
 				  	
 				  	var i: int = 0, max: int = logObj.length;					  					  	
 				  	for (i; i < max; i++)
@@ -278,7 +278,7 @@ package org.osflash.thunderbolt
 				  		logObject(logObj[i]);
 				  	}
 				  	
-				  	Logger.callGroupAction( GROUP_END );
+				  	FireBugLogger.callGroupAction( GROUP_END );
 				  				  			
 				}
 				else
@@ -300,13 +300,13 @@ package org.osflash.thunderbolt
 								//TODO: filter classes
 								// var classReference: Class = getDefinitionByName(typeItem) as Class;
 								var valueItem: * = logObj[propItem];
-								Logger.logObject(valueItem, propItem);
+								FireBugLogger.logObject(valueItem, propItem);
 							}
 						}					
 					}
 					else
 					{
-						Logger.logObject(logObj, type);					
+						FireBugLogger.logObject(logObj, type);					
 					}
 				}
 			}
@@ -315,7 +315,7 @@ package org.osflash.thunderbolt
 				// call one stop message only
 				if (!_stopLog)
 				{
-					Logger.call( "STOP LOGGING: More than " + _depth + " nested objects or properties." );
+					FireBugLogger.call( "STOP LOGGING: More than " + _depth + " nested objects or properties." );
 					_stopLog = true;
 				}			
 			}									
@@ -355,7 +355,7 @@ package org.osflash.thunderbolt
 				else if (groupAction == GROUP_END)
 					ExternalInterface.call("console.groupEnd");			
 				else
-					ExternalInterface.call("console." + Logger.ERROR, "group type has not defined");	
+					ExternalInterface.call("console." + FireBugLogger.ERROR, "group type has not defined");	
 			}
 			else
 			{
@@ -469,12 +469,12 @@ package org.osflash.thunderbolt
 						// show details of stackData only if it available
 						
 						var isValidStack : Boolean   = (String(stacks[4]).indexOf("mx.logging::AbstractTarget") > -1) &&  (stacks.length >= 9); 
-		    			var data         : StackData = isValidStack ? Logger.stackDataFromStackTrace( stacks[ 8 ] ) : null;
+		    			var data         : StackData = isValidStack ? FireBugLogger.stackDataFromStackTrace( stacks[ 8 ] ) : null;
 		    			
 						if ( data != null ) {
 							message += (data.packageName && data.packageName != "") ? data.packageName + "." : data.packageName;
 							message += data.className;
-							message += (data.lineNumber > 0) ? " [" + data.lineNumber + "]" + Logger.FIELD_SEPERATOR : "";  
+							message += (data.lineNumber > 0) ? " [" + data.lineNumber + "]" + FireBugLogger.FIELD_SEPERATOR : "";  
 						}
 		    		}  		    			
 	    		}               

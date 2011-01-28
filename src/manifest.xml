@@ -8,6 +8,8 @@
 	<!-- MX Logging Utils -->
 	<component class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
 	<component class="ext.swizframework.utils.logging.Logger" />	
+	
+	<component class="com.farata.log4fx.Log4FxTarget" />
 	<component class="org.osflash.thunderbolt.ThunderBoltTarget" />
 
 	<!-- Custom Utilities -->

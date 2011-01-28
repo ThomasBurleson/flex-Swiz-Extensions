@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="false" version="3">
   <includeClasses>
+    <classEntry path="com.farata.log4fx.Log4FxTarget"/>
+    <classEntry path="com.farata.log4fx.LocalConnectionLogger"/>
+    <classEntry path="com.farata.log4fx.utils.LoggerUtils"/>
     <classEntry path="ext.swizframework.metadata.DeepLinkMetadataTag"/>
     <classEntry path="ext.swizframework.processors.DeepLinkProcessor"/>
     <classEntry path="ext.swizframework.processors.LogProcessor"/>
@@ -9,7 +12,7 @@
     <classEntry path="ext.swizframework.utils.logging.GlobalExceptionLogger"/>
     <classEntry path="ext.swizframework.utils.logging.Logger"/>
     <classEntry path="ext.swizframework.utils.logging.LoggerRegistry"/>
-    <classEntry path="org.osflash.thunderbolt.Logger"/>
+    <classEntry path="org.osflash.thunderbolt.FireBugLogger"/>
     <classEntry path="org.osflash.thunderbolt.ThunderBoltTarget"/>
   </includeClasses>
   <includeResources>

@@ -16,14 +16,18 @@
 * 
 */
 
-package org.osflash.thunderbolt
+package com.farata.log4fx
 {
+	import com.farata.log4fx.utils.LoggerUtils;
+	
 	import mx.logging.AbstractTarget;
 	import mx.logging.ILogger;
 	import mx.logging.LogEvent;
 	import mx.logging.LogEventLevel;
 	
-	public class ThunderBoltTarget extends AbstractTarget {
+	import org.osflash.thunderbolt.FireBugLogger;
+	
+	public class Log4FxTarget extends AbstractTarget {
 
 		[Inspectable(category="General", defaultValue="true")]	   	    	
 		public var includeLevel: Boolean = true;
@@ -33,17 +37,6 @@ package org.osflash.thunderbolt
 	
 		 
 	     /**
-	     *  Setter method to stop logs
-	     * 
-		 * @param 	value	Boolean - default value is "false"
-		 * 
-	     */
-		[Inspectable(category="General", defaultValue="false")]		
-		public function set hide( value: Boolean ):void {
-			FireBugLogger.hide = value;
-		}   		
-
-	     /**
 	     *  Setter method for using a timestamp
 	     * 
 		 * @param 	value	Boolean - default value is "true"
@@ -51,18 +44,9 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set includeTime( value: Boolean ):void {
+			LocalConnectionLogger.includeTime = value;
 			FireBugLogger.includeTime = value;
-		}   		
-    		
-	     /**
-	     *  Setter method for using ThunderBolt AS3 console or not
-	     * 
-		 * @param 	value	Boolean for using console or not. Default value is "false"
-		 * 
-	     */
-		[Inspectable(category="General", defaultValue="false")]		
-		public function set console( value: Boolean ):void {
-			FireBugLogger.console = value;
+			
 		}   		
     		
 	     /**
@@ -73,6 +57,7 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set showCaller( value: Boolean ):void {
+			LocalConnectionLogger.showCaller = value;
 			FireBugLogger.showCaller = value;
 		}   
 
@@ -102,20 +87,23 @@ package org.osflash.thunderbolt
 		 * 
 		 */
 		override public function logEvent( event: LogEvent ):void {
-			var showCaller : Boolean = FireBugLogger.showCaller;
+			var showCaller : Boolean = LocalConnectionLogger.showCaller;
 			
 			try {
-				FireBugLogger.showCaller = includeCategory;
+				LocalConnectionLogger.showCaller = FireBugLogger.showCaller = includeCategory;
 				
-				var level   	 : String = includeLevel ? getLogLevel( event.level ) : "";
-				var message 	 : String = event.message.length ? event.message : ""
+				var category     : String = getCategoryInfo(event,false);
+				var message 	 : String = event.message.length ? event.message : "";
 				
-				// calls ThunderBolt	
-				FireBugLogger.log ( level, message );
+				//  Call BOTH the Log4fx viewer and the ThunderBolt console (useful if the Log4Fx viewer is not open)
+				LocalConnectionLogger.log ( LogEvent.getLevelString( event.level ), category, message );
+				FireBugLogger.log ( getFireBugLevel(event.level) , message );
+				
+				
 			} finally {
 				
 				// Restore master value...
-				FireBugLogger.showCaller = showCaller;
+				LocalConnectionLogger.showCaller = FireBugLogger.showCaller = showCaller;
 			}
 		}   
 		
@@ -130,25 +118,24 @@ package org.osflash.thunderbolt
 		 * @return 	String		level description
 		 * 
 		 */		
-		private static function getLogLevel (logLevel: int): String
-		{
-			var level: String = FireBugLogger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
+		private static function getFireBugLevel (logLevel: int): String{
+			var level: String = LocalConnectionLogger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
 			
 			switch (logLevel) 
 			{
-				case LogEventLevel.INFO:		level = FireBugLogger.INFO;		break;
-				case LogEventLevel.WARN:		level = FireBugLogger.WARN;		break;				
-				case LogEventLevel.ERROR:		level = FireBugLogger.ERROR;		break;
+				case LogEventLevel.INFO:		level = LocalConnectionLogger.INFO;		break;
+				case LogEventLevel.WARN:		level = LocalConnectionLogger.WARN;		break;				
+				case LogEventLevel.ERROR:		level = LocalConnectionLogger.ERROR;		break;
 				
 				// Firebug doesn't support a fatal level
-				case LogEventLevel.FATAL:		level = FireBugLogger.ERROR;		break;
+				case LogEventLevel.FATAL:		level = LocalConnectionLogger.ERROR;		break;
 			}
 			
 			return level;
 		} 
 		
-		private static function getCategoryInfo(event:Object):String {
-			return ILogger( event.target ).category + FireBugLogger.FIELD_SEPERATOR;
+		private static function getCategoryInfo(event:Object, addSeperator:Boolean=true):String {
+			return ILogger( event.target ).category + (addSeperator ? LoggerUtils.FIELD_SEPERATOR : "");
 		}		    
 		
 	}
