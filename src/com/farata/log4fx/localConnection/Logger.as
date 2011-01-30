@@ -8,13 +8,13 @@
 *
 */
 
-package com.farata.log4fx
+package com.farata.log4fx.localConnection
 {
-	import com.farata.log4fx.utils.LoggerUtils;
-	
 	import flash.net.LocalConnection;
 	
-	public class LocalConnectionLogger
+	import org.osflash.thunderbolt.firebug.LoggerUtils;
+	
+	public class Logger
 	{
 		public static const INFO  : String = "info";
 		public static const WARN  : String = "warn";
@@ -34,7 +34,7 @@ package com.farata.log4fx
 		 */		
 		public static function info (msg: String = null, ...logObjects): void
 		{
-			LocalConnectionLogger.log( LocalConnectionLogger.INFO, "", msg, logObjects );			
+			Logger.log( Logger.INFO, "", msg, logObjects );			
 		}
 		
 		/**
@@ -46,7 +46,7 @@ package com.farata.log4fx
 		 */		
 		public static function warn (msg: String = null, ...logObjects): void
 		{
-			LocalConnectionLogger.log( LocalConnectionLogger.WARN, "", msg, logObjects );			
+			Logger.log( Logger.WARN, "", msg, logObjects );			
 		}
 
 		/**
@@ -58,7 +58,7 @@ package com.farata.log4fx
 		 */		
 		public static function error (msg: String = null, ...logObjects): void
 		{
-			LocalConnectionLogger.log( LocalConnectionLogger.ERROR, "", msg, logObjects );			
+			Logger.log( Logger.ERROR, "", msg, logObjects );			
 		}
 		
 		/**
@@ -70,7 +70,7 @@ package com.farata.log4fx
 		 */		
 		public static function debug (msg: String = null, ...logObjects): void
 		{
-			LocalConnectionLogger.log( LocalConnectionLogger.LOG, "", msg, logObjects );			
+			Logger.log( Logger.LOG, "", msg, logObjects );			
 		}		
 	    					 
 		/**
@@ -83,22 +83,22 @@ package com.farata.log4fx
 		 * @param 	logObjects	Array			Array of log objects
 		 */			 
 		public static function log (level: String, category:String="", msg: String = "", logObjects: Array = null): void {
-		 	var logMsg   : String = "";
-				
+		 	var logMsg : String = "";
+			
 				logMsg += showCaller  ? LoggerUtils.logCaller()      : "";            			
 				logMsg += msg;
-				
-				if (logObjects != null) {
-					var i: int = 0, l: int = logObjects.length;	 	
-					for (i = 0; i < l; i++) 
-					{
-						connection.send (LoggerUtils.logObject(logObjects[i]), category, level, new Date());
-					}					
-				}
 				
 		 	// send message	to the logging system
 			connection.send(logMsg, category, level, new Date());
     			
+			if (logObjects != null) {
+				var i: int = 0, l: int = logObjects.length;	 	
+				for (i = 0; i < l; i++) 
+				{
+					connection.send (LoggerUtils.logObject(logObjects[i]), category, level, new Date());
+				}					
+			}
+				
 		}
 		
 		

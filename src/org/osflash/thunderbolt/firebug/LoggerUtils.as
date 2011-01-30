@@ -9,16 +9,39 @@
 * 
 */
 
-package com.farata.log4fx.utils
+package org.osflash.thunderbolt.firebug
 {
-	import com.farata.log4fx.LocalConnectionLogger;
-	
+	import flash.system.System;
 	import flash.utils.describeType;
 	
 	public class LoggerUtils
 	{
+		public static var groupCallback : Function = function(groupAction: String, msg: String = ""):void {; };
+		
+		public static const GROUP_START: String = "group";
+		public static const GROUP_END  : String = "groupEnd";
+		
 		public static var FIELD_SEPERATOR: String = " :: ";
 
+		/**
+		 * Calculates the amount of memory in MB and Kb currently in use by Flash Player
+		 * @return 	String		Message about the current value of memory in use
+		 *
+		 * Tip: For detecting memory leaks in Flash or Flex check out WSMonitor, too.
+		 * @see: http://www.websector.de/blog/2007/10/01/detecting-memory-leaks-in-flash-or-flex-applications-using-wsmonitor/ 
+		 *
+		 */		 
+		public static function memorySnapshot():String
+		{
+			var currentMemValue: uint = System.totalMemory;
+			var message: String = 	"Memory Snapshot: " 
+				+ Math.round(currentMemValue / 1024 / 1024 * 100) / 100 
+				+ " MB (" 
+				+ Math.round(currentMemValue / 1024) 
+				+ " kb)";
+			return message;
+		}
+		
 		/**
 		 * Creates a String of valid time value
 		 * @return 			String 		current time as a String using valid hours, minutes, seconds and milliseconds
@@ -48,6 +71,8 @@ package com.farata.log4fx.utils
 		public static function logObject (logObj:*, id:String = null, depth:int=0): String {
 			var results : String = "";
 			
+			_stopLog = (depth == 0) ? false : _stopLog;
+			
 			if ( depth < MAX_DEPTH ) {
 				++ depth;
 				
@@ -64,19 +89,26 @@ package com.farata.log4fx.utils
 				}
 				else if (type == "Object")
 				{
+					groupCallback( GROUP_START, "[Object] " + propID);
+					
 				  	for (var element: String in logObj)
 				  	{
 					  	results += logObject(logObj[element], element, depth) + "\r";	
 				  	}
+					
+					groupCallback( GROUP_END );
 				}
 				else if (type == "Array")
 				{
-				  	var i: int = 0, max: int = logObj.length;					  					  	
+					groupCallback( GROUP_START, "[Array] " + propID );
+					
+					var i: int = 0, max: int = logObj.length;					  					  	
 				  	for (i; i < max; i++)
 				  	{
 						results += logObject(logObj[i], String(i), depth) + "\r";
 				  	}
-				  				  			
+				  	
+					groupCallback( GROUP_END );
 				}
 				else
 				{
@@ -107,6 +139,15 @@ package com.farata.log4fx.utils
 					}
 				}
 			}
+			else {
+				// call one stop message only
+				if (!_stopLog)
+				{
+					Logger.send( "STOP LOGGING: More than " + depth + " nested objects or properties.", Logger.WARN );
+					_stopLog = true;
+				}			
+			}
+			
 			
 			return results;
 		}
@@ -225,8 +266,12 @@ package com.farata.log4fx.utils
 		// private vars	
 		private static const MAX_DEPTH: int = 255;
 	
+			
+		
+		
+		private static var _stopLog: Boolean = false;
 	}
-	
+
 }
 
 /**

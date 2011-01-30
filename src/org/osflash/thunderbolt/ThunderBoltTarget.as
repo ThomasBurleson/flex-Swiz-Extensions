@@ -22,6 +22,7 @@ package org.osflash.thunderbolt
 	import mx.logging.ILogger;
 	import mx.logging.LogEvent;
 	import mx.logging.LogEventLevel;
+	import org.osflash.thunderbolt.firebug.Logger;
 	
 	public class ThunderBoltTarget extends AbstractTarget {
 
@@ -40,7 +41,7 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="false")]		
 		public function set hide( value: Boolean ):void {
-			FireBugLogger.hide = value;
+			org.osflash.thunderbolt.firebug.Logger.hide = value;
 		}   		
 
 	     /**
@@ -51,7 +52,7 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set includeTime( value: Boolean ):void {
-			FireBugLogger.includeTime = value;
+			org.osflash.thunderbolt.firebug.Logger.includeTime = value;
 		}   		
     		
 	     /**
@@ -62,7 +63,7 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="false")]		
 		public function set console( value: Boolean ):void {
-			FireBugLogger.console = value;
+			org.osflash.thunderbolt.firebug.Logger.console = value;
 		}   		
     		
 	     /**
@@ -73,7 +74,7 @@ package org.osflash.thunderbolt
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set showCaller( value: Boolean ):void {
-			FireBugLogger.showCaller = value;
+			org.osflash.thunderbolt.firebug.Logger.showCaller = value;
 		}   
 
 	     /**
@@ -102,20 +103,20 @@ package org.osflash.thunderbolt
 		 * 
 		 */
 		override public function logEvent( event: LogEvent ):void {
-			var showCaller : Boolean = FireBugLogger.showCaller;
+			var showCaller : Boolean = Logger.showCaller;
 			
 			try {
-				FireBugLogger.showCaller = includeCategory;
+				org.osflash.thunderbolt.firebug.Logger.showCaller = includeCategory;
 				
 				var level   	 : String = includeLevel ? getLogLevel( event.level ) : "";
 				var message 	 : String = event.message.length ? event.message : ""
 				
 				// calls ThunderBolt	
-				FireBugLogger.log ( level, message );
+				org.osflash.thunderbolt.firebug.Logger.log( level, message );
 			} finally {
 				
 				// Restore master value...
-				FireBugLogger.showCaller = showCaller;
+				org.osflash.thunderbolt.firebug.Logger.showCaller = showCaller;
 			}
 		}   
 		
@@ -132,23 +133,27 @@ package org.osflash.thunderbolt
 		 */		
 		private static function getLogLevel (logLevel: int): String
 		{
-			var level: String = FireBugLogger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
+			var level: String = Logger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
 			
 			switch (logLevel) 
 			{
-				case LogEventLevel.INFO:		level = FireBugLogger.INFO;		break;
-				case LogEventLevel.WARN:		level = FireBugLogger.WARN;		break;				
-				case LogEventLevel.ERROR:		level = FireBugLogger.ERROR;		break;
 				
 				// Firebug doesn't support a fatal level
-				case LogEventLevel.FATAL:		level = FireBugLogger.ERROR;		break;
+				case LogEventLevel.FATAL:	level = Logger.ERROR;	break;
+				case LogEventLevel.ERROR:	level = Logger.ERROR;	break;
+				case LogEventLevel.WARN	:	level = Logger.WARN;		break;				
+				case LogEventLevel.INFO	:	level = Logger.INFO;		break;
+				case LogEventLevel.DEBUG:	level = Logger.DEBUG;	break;
+				
+				default					:	level = Logger.LOG;		break;
+				
 			}
 			
 			return level;
 		} 
 		
 		private static function getCategoryInfo(event:Object):String {
-			return ILogger( event.target ).category + FireBugLogger.FIELD_SEPERATOR;
+			return ILogger( event.target ).category + org.osflash.thunderbolt.firebug.LoggerUtils.FIELD_SEPERATOR;
 		}		    
 		
 	}

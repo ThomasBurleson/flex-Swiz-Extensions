@@ -18,14 +18,15 @@
 
 package com.farata.log4fx
 {
-	import com.farata.log4fx.utils.LoggerUtils;
+	import com.farata.log4fx.localConnection.Logger;
 	
 	import mx.logging.AbstractTarget;
 	import mx.logging.ILogger;
 	import mx.logging.LogEvent;
 	import mx.logging.LogEventLevel;
 	
-	import org.osflash.thunderbolt.FireBugLogger;
+	import org.osflash.thunderbolt.firebug.Logger;
+	import org.osflash.thunderbolt.firebug.LoggerUtils;
 	
 	public class Log4FxTarget extends AbstractTarget {
 
@@ -44,8 +45,8 @@ package com.farata.log4fx
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set includeTime( value: Boolean ):void {
-			LocalConnectionLogger.includeTime = value;
-			FireBugLogger.includeTime = value;
+			com.farata.log4fx.localConnection.Logger.includeTime = value;
+			org.osflash.thunderbolt.firebug.Logger.includeTime = value;
 			
 		}   		
     		
@@ -57,8 +58,8 @@ package com.farata.log4fx
 	     */
 		[Inspectable(category="General", defaultValue="true")]		
 		public function set showCaller( value: Boolean ):void {
-			LocalConnectionLogger.showCaller = value;
-			FireBugLogger.showCaller = value;
+			com.farata.log4fx.localConnection.Logger.showCaller = value;
+			org.osflash.thunderbolt.firebug.Logger.showCaller = value;
 		}   
 
 	     /**
@@ -87,23 +88,23 @@ package com.farata.log4fx
 		 * 
 		 */
 		override public function logEvent( event: LogEvent ):void {
-			var showCaller : Boolean = LocalConnectionLogger.showCaller;
+			var showCaller : Boolean = com.farata.log4fx.localConnection.Logger.showCaller;
 			
 			try {
-				LocalConnectionLogger.showCaller = FireBugLogger.showCaller = includeCategory;
+				com.farata.log4fx.localConnection.Logger.showCaller = org.osflash.thunderbolt.firebug.Logger.showCaller = includeCategory;
 				
 				var category     : String = getCategoryInfo(event,false);
 				var message 	 : String = event.message.length ? event.message : "";
 				
 				//  Call BOTH the Log4fx viewer and the ThunderBolt console (useful if the Log4Fx viewer is not open)
-				LocalConnectionLogger.log ( LogEvent.getLevelString( event.level ), category, message );
-				FireBugLogger.log ( getFireBugLevel(event.level) , message );
+				com.farata.log4fx.localConnection.Logger.log ( LogEvent.getLevelString( event.level ), category, message );
+				org.osflash.thunderbolt.firebug.Logger.log ( getFireBugLevel(event.level) , message );
 				
 				
 			} finally {
 				
 				// Restore master value...
-				LocalConnectionLogger.showCaller = FireBugLogger.showCaller = showCaller;
+				com.farata.log4fx.localConnection.Logger.showCaller = org.osflash.thunderbolt.firebug.Logger.showCaller = showCaller;
 			}
 		}   
 		
@@ -119,16 +120,15 @@ package com.farata.log4fx
 		 * 
 		 */		
 		private static function getFireBugLevel (logLevel: int): String{
-			var level: String = LocalConnectionLogger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
+			var level: String = com.farata.log4fx.localConnection.Logger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
 			
 			switch (logLevel) 
 			{
-				case LogEventLevel.INFO:		level = LocalConnectionLogger.INFO;		break;
-				case LogEventLevel.WARN:		level = LocalConnectionLogger.WARN;		break;				
-				case LogEventLevel.ERROR:		level = LocalConnectionLogger.ERROR;		break;
-				
-				// Firebug doesn't support a fatal level
-				case LogEventLevel.FATAL:		level = LocalConnectionLogger.ERROR;		break;
+				case LogEventLevel.FATAL:		level = com.farata.log4fx.localConnection.Logger.ERROR;		break;
+				case LogEventLevel.ERROR:		level = com.farata.log4fx.localConnection.Logger.ERROR;		break;
+				case LogEventLevel.WARN :		level = com.farata.log4fx.localConnection.Logger.WARN;			break;
+				case LogEventLevel.INFO :		level = com.farata.log4fx.localConnection.Logger.INFO;			break;
+				default 			    : 		level = com.farata.log4fx.localConnection.Logger.LOG;			// LogLevel.DEBUG && LogLevel.ALL
 			}
 			
 			return level;
