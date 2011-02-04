@@ -172,7 +172,7 @@ package org.osflash.thunderbolt.firebug
 		public static function send (msg: String, level:String): void
 		{
 			if ( _isFireBug == true )	ExternalInterface.call("console." + level, msg);			
-			else						trace ( level + " " + msg);	
+			else						trace ( msg);	
 
 		}
 		

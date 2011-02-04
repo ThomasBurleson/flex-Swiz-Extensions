@@ -122,6 +122,7 @@ import flash.utils.Timer;
 
 class Log4FxConnection {
 	
+	public var maxQueueSize : Number = 5000000;		// 500 Kb
 	
 	public function Log4FxConnection(destinationID:String=null) {
 		_destination = (destinationID == null) ? DEFAULT_CONNECTION_ID : destinationID;
@@ -247,6 +248,13 @@ class Log4FxConnection {
 			}
 			
 		} while (buffer.position < buffer.length);
+		
+		// Clip queue size to maxLimit (if needed)
+		
+		while (queueSize > maxQueueSize) {
+			// Remove oldes first...
+			_messageQueue.shift();
+		}
 	}
 	
 	/**
@@ -272,6 +280,17 @@ class Log4FxConnection {
 		}
 	}
 	
+	
+	private function get queueSize():Number {
+		var results : Number = 0;
+		
+		_messageQueue.forEach(
+			function(it:QueueItem, index:int, arr:Array):void {
+				results += it.msg.length;
+			});
+		
+		return results;
+	}
 	
 	// If you are implementing communication between different domains, you need to define connectionName 
 	// in both the sending and receiving LocalConnection objects in such a way that the current superdomain 
