@@ -11,8 +11,9 @@
     <classEntry path="ext.swizframework.utils.logging.GlobalExceptionLogger"/>
     <classEntry path="ext.swizframework.utils.logging.Logger"/>
     <classEntry path="ext.swizframework.utils.logging.LoggerRegistry"/>
-    <classEntry path="org.osflash.thunderbolt.firebug.Logger"/>
     <classEntry path="org.osflash.thunderbolt.ThunderBoltTarget"/>
+    <classEntry path="org.osflash.thunderbolt.firebug.Logger"/>
+    <classEntry path="org.osflash.thunderbolt.firebug.LoggerUtils"/>
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="manifest.xml" sourcePath="manifest.xml"/>
