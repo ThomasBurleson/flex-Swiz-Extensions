@@ -10,8 +10,8 @@ Custom extension include the:
 This library includes 
 
 - modified ThunderBoltAS3 classes for logging to FireBug console.
-- new Farata classes for logging to simultaneously to FireBug and the external Log4Fx console/viewer. 
-- the external  Log4Fx tool [located in /com/farata/log4fx/viewer/Log4FxViewer.swf]
+- new Farata [Log4FxTarget](https://github.com/ThomasBurleson/swiz-extensions_2/blob/develop/src/com/farata/log4fx/Log4FxTarget.as) classes for logging to simultaneously to FireBug and the external Log4Fx console/viewer. 
+- the external  Log4Fx tool [located in /com/farata/log4fx/viewer/Log4FxViewer.swf](https://github.com/ThomasBurleson/swiz-extensions_2/blob/develop/src/com/farata/log4fx/viewer/Log4FxViewer.swf)
 
 ### History:
 
