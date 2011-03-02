@@ -386,7 +386,7 @@ package ext.swizframework.processors
 		protected function mediateEventHandler( event:Event ):void
 		{
 			var deepLink: DeepLinkMetadataTag = DeepLinkMetadataTag( deepLinks[ mediateEventTypes.lastIndexOf( event.type ) ] );
-			var mediate	: IMetadataTag 		  = deepLink.host.getMetadataTagByName( "Mediate" );
+			var mediate	: IMetadataTag 		  = deepLink.host.getMetadataTagByName( "Mediate" ) || deepLink.host.getMetadataTagByName( "EventHandler" );
 			var args	: Array 			  = mediate.hasArg( "properties" ) ? getEventArgs( event, mediate.getArg( "properties" ).value.split( /\s*,\s*/ ) ) : null;
 			
 			if( deepLink != null ) {
