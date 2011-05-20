@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="false" version="3">
+<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="false" version="3">
   <includeClasses>
     <classEntry path="com.farata.log4fx.Log4FxTarget"/>
     <classEntry path="com.farata.log4fx.localConnection.Logger"/>
@@ -17,6 +17,7 @@
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="manifest.xml" sourcePath="manifest.xml"/>
+    <resourceEntry destPath="metadata.xml" sourcePath="metadata.xml"/>
   </includeResources>
   <namespaceManifests>
     <namespaceManifestEntry manifest="manifest.xml" namespace="http://ext.swizframework.org"/>

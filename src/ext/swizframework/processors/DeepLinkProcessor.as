@@ -82,12 +82,12 @@ package ext.swizframework.processors
 	 * 		model.msg = "Hello " + name + "!";
 	 * 	}
 	 * 
-	 * Lastly, [DeepLink] also works in reverse with the help of the Swiz [Mediate] metadata. In this example 
+	 * Lastly, [DeepLink] also works in reverse with the help of the Swiz [EventHandler] metadata. In this example 
 	 * the URL will change to /hello/Ryan and the browser window title to "Hello Ryan!" when the 
 	 * HelloEvent.HELLO event is dispatched:
 	 * 
 	 * 	[DeepLink( url="/hello/{0}", title="Hello {0}!" )]
-	 * 	[Mediate( event="HelloEvent.HELLO", properties="name" )]
+	 * 	[EventHandler( event="HelloEvent.HELLO", properties="name" )]
 	 * 	public function sayHello( name:String ):void
 	 * 	{
 	 * 		model.msg = "Hello " + name + "!";

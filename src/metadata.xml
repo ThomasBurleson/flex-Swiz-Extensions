@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<annotations version="1.0">
+
+	<metadata name="Log" description="Marks a property in which an ILogger reference should be injected">
+		<context name="variable" />
+		<context name="setter" />
+	</metadata>
+	
+	<metadata name="DeepLink" description="Marks a method that should be invoked with the Browser URL changes">
+	  <context name="method" />
+	  
+    <attribute name="title"       type="String"   required="false"  />
+    <attribute name="url"         type="String"   required="true"  />
+	</metadata>
+
+</annotations>
+
