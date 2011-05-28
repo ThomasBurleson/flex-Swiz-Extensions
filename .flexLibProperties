@@ -3,6 +3,7 @@
   <includeClasses>
     <classEntry path="com.farata.log4fx.Log4FxTarget"/>
     <classEntry path="com.farata.log4fx.localConnection.Logger"/>
+    <classEntry path="ext.swizframework.core.AbstractPresentationModel"/>
     <classEntry path="ext.swizframework.metadata.DeepLinkMetadataTag"/>
     <classEntry path="ext.swizframework.processors.DeepLinkProcessor"/>
     <classEntry path="ext.swizframework.processors.LogProcessor"/>
