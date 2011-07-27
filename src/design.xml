@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<design>
+    <namespaces>
+        <namespace prefix="ext" uri="http://ext.swizframework.org" />
+    </namespaces>
+</design>
