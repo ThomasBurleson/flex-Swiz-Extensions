@@ -4,14 +4,33 @@
 	<metadata name="Log" description="Marks a property in which an ILogger reference should be injected">
 		<context name="variable" />
 		<context name="setter" />
+		<context name="method" />
+		
+		<attribute name="scope" 
+				   type="String"
+				   values="global,local"
+				   defaultValue="global"
+				   required="false" 
+				   description="Marks a property in which an ILogger reference should be injected" />
 	</metadata>
 	
-	<metadata name="DeepLink" description="Marks a method that should be invoked with the Browser URL changes">
-	  <context name="method" />
-	  
-    <attribute name="title"       type="String"   required="false"  />
-    <attribute name="url"         type="String"   required="true"  />
-	</metadata>
+	<metadata name="DeepLink" description="Marks this method as syncrhonized with Browser via SWFAddress">
+		<context name="method" />
+		
+		<attribute name="url" 
+				   type="String"
+				   values="global,local"
+				   defaultValue=""
+				   required="false" 
+				   description="Browser URL to watch and auto-invoke this method" />
 
+		<attribute name="title" 
+				   type="String"
+				   values="global,local"
+				   defaultValue=""
+				   required="false" 
+				   description="Title of browser when url matches" />
+	</metadata>
+	
 </annotations>
 

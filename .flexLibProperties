@@ -18,8 +18,6 @@
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="manifest.xml" sourcePath="manifest.xml"/>
-    <resourceEntry destPath="design.xml" sourcePath="design.xml"/>
-    <resourceEntry destPath="metadata.xml" sourcePath="metadata.xml"/>
   </includeResources>
   <namespaceManifests>
     <namespaceManifestEntry manifest="manifest.xml" namespace="http://ext.swizframework.org"/>
