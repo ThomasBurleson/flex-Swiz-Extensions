@@ -10,7 +10,7 @@
     </categories>
     
     <components>
-    	<component name="AbstractPresentationModel" displayName="AbstractPresentationModel" 			namespace="se" category="SwizExt" />
+    	<component name="AbstractPresentationModel" displayName="AbstractPresentationModel" namespace="se" category="SwizExt" />
         <component name="DeepLinkProcess" 			displayName="DeepLinkProcess" 			namespace="se" category="SwizExt" />
         <component name="LogProcessor" 				displayName="LogProcessor" 				namespace="se" category="SwizExt" />
         <component name="GlobalExceptionLogger" 	displayName="GlobalExceptionLogger" 	namespace="se" category="SwizExt" />

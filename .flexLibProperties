@@ -9,6 +9,7 @@
     <classEntry path="ext.swizframework.processors.LogProcessor"/>
     <classEntry path="ext.swizframework.utils.AsyncInterceptor"/>
     <classEntry path="ext.swizframework.utils.SWFAddressManager"/>
+    <classEntry path="ext.swizframework.utils.chain.DelayChainStep"/>
     <classEntry path="ext.swizframework.utils.chain.ThrottledEventChain"/>
     <classEntry path="ext.swizframework.utils.logging.GlobalExceptionLogger"/>
     <classEntry path="ext.swizframework.utils.logging.Logger"/>
