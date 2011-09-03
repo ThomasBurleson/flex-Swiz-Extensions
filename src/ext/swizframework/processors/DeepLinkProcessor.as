@@ -32,16 +32,22 @@ package ext.swizframework.processors
 	import mx.logging.ILogger;
 	import mx.managers.BrowserManager;
 	import mx.managers.IBrowserManager;
+	import mx.utils.StringUtil;
 	
 	import org.swizframework.core.Bean;
 	import org.swizframework.core.ISwiz;
 	import org.swizframework.metadata.EventHandlerMetadataTag;
 	import org.swizframework.processors.BaseMetadataProcessor;
+	import org.swizframework.processors.ProcessorPriority;
 	import org.swizframework.reflection.ClassConstant;
 	import org.swizframework.reflection.Constant;
 	import org.swizframework.reflection.IMetadataTag;
 	import org.swizframework.reflection.TypeCache;
 	import org.swizframework.reflection.TypeDescriptor;
+	
+	import utils.string.supplant;
+	import utils.string.toArray;
+	import utils.string.toString;
 	
 	/**
 	 * [DeepLink] metadata processor is a derivative of the excellent URLMapping class created by Ryan Campbell
@@ -115,6 +121,11 @@ package ext.swizframework.processors
 		public var browserManager:IBrowserManager;
 		
 		/**
+		 * Should the urls be escaped/unescaped 
+		 */
+		public var enableEscape : Boolean = true;
+		
+		/**
 		 * List of mediate event types
 		 */
 		protected var mediateEventTypes:Array = [];
@@ -151,6 +162,13 @@ package ext.swizframework.processors
 		// ========================================
 		
 		/**
+		 * Set the processing priority so the [DeepLink] processor runs BEFORE the [Mediate] or [EventHandler]
+		 */
+		override public function get priority():int {
+			return ProcessorPriority.EVENT_HANDLER + 10;
+		}
+		
+		/**
 		 * Init
 		 */
 		override public function init( swiz:ISwiz ):void
@@ -184,7 +202,7 @@ package ext.swizframework.processors
 			
 			addDeepLink( deepLink, method );
 			
-			logger.debug( "Set up link url='{0}' on {1}", deepLink.url, metadataTag.host.name );
+			logger.debug( supplant("setup link url='{url}' on {name}", {url: deepLink.url, name:metadataTag.host.name} ) );
 		}
 		
 		/**
@@ -193,10 +211,11 @@ package ext.swizframework.processors
 		override public function tearDownMetadataTag(metadataTag:IMetadataTag, bean:Bean):void
 		{
 			var deepLink:DeepLinkMetadataTag = DeepLinkMetadataTag( metadataTag );
-			var method:Function = bean.source[ metadataTag.host.name ] as Function;
+			var method	:Function 			 = bean.source[ metadataTag.host.name ] as Function;
+			
+				logger.debug( supplant("teardown link url='{url}' on {name}", {url: deepLink.url, name:metadataTag.host.name}) );
 			
 			removeDeepLink( deepLink, method );
-			logger.debug( "Tear down link url='{0}' on {1}", deepLink.url, metadataTag.host.name );
 		}
 		
 		/**
@@ -205,7 +224,8 @@ package ext.swizframework.processors
 		public function onBrowserURLChange( event:Event ):void {
 			var url:String = event.hasOwnProperty("url") ? event["url"] : "";
 			
-			url = url.indexOf( "#" ) > -1 ? url.substr( url.indexOf( "#" ) + 1 ) : "";
+			if ( url.indexOf( "#" ) > -1 )
+				url = url.substr( url.indexOf( "#" ) + 1 );
 			
 			if (url != "") {
 				logger.debug( "onBrowserURLChange(url='{0}')",url );
@@ -230,7 +250,7 @@ package ext.swizframework.processors
 		 */
 		protected function addDeepLink( deepLink:DeepLinkMetadataTag, method:Function ):void
 		{
-			logger.debug( "addDeepLink(url='{0}',title='{1}')", deepLink.url, deepLink.title );
+			logger.debug( supplant("addDeepLink(url='{url}',title='{title}')", deepLink ) );
 			
 			addMediate( deepLink );
 			
@@ -256,7 +276,7 @@ package ext.swizframework.processors
 		 * Remove a URL mapping
 		 */
 		protected function removeDeepLink( deepLink:DeepLinkMetadataTag, method:Function ):void {
-			logger.debug( "removeDeepLink(url='{0}',title='{1}')", deepLink.url, deepLink.title );
+			logger.debug( supplant("removeDeepLink(url='{url}',title='{title}')", deepLink ) );
 			
 			var index:int = deepLinks.indexOf( deepLink );
 			if ( index != -1 ) {
@@ -342,7 +362,7 @@ package ext.swizframework.processors
 			swiz.dispatcher.addEventListener( eventType, mediateEventHandler );
 			mediateEventTypes[ mediateEventTypes.length ] = eventType;
 			
-			logger.debug( "add mediation handling for event='{0}'",eventType );
+			logger.debug( "addEventHandler( event='{0}' )",eventType );
 		}
 		
 		/**
@@ -353,62 +373,114 @@ package ext.swizframework.processors
 			swiz.dispatcher.removeEventListener( eventType, mediateEventHandler );
 			mediateEventTypes.splice( mediateEventTypes.lastIndexOf( eventType ), 1 );
 			
-			logger.debug( "remove mediation handling for event='{0}'",eventType );
+			logger.debug( "remove eventHandler( event='{0}' )",eventType );
 		}
 		
 		/**
-		 * Process an incoming URL change
+		 * Process an incoming URL change to (a) call the associated eventHandler method and (b) set browser title.
+		 * The eventHandler function may have 0-n arguments; which are constructed as either 
+		 *   i. Array of args
+		 *       e.g.
+		 *  		  [DeepLink( url="/jump/{0}/{1}", title="State {0}!" )]
+		 *            [EventHandler(event="GotoEvent.GOTO",properties="action,options")]
+		 * 
+		 *            public function onGoto( action:String,options:String ):void {... }
+		 * 
+		 *   ii. Hashmap of field names whose values are the args
+		 *       e.g.
+		 * 			  [DeepLink( url="/jump/{action}/{options}", title="State {name}!" )]
+		 *            [EventHandler(event="GotoEvent2.GOTO",properties="details")]
+		 * 
+		 *            public function onGoto( details:Object ):void { ... }
+		 * 
+		 * This allows
 		 */
-		protected function processDeepLink( match:Array, deepLink:DeepLinkMetadataTag, method:Function ):void
+		protected function processDeepLink( lookups:Array, deepLink:DeepLinkMetadataTag, method:Function ):void
 		{
-			var parameters:Array = [];
-			var placeholders:Array = deepLink.url.match( /\{\d+\}/g );
+				function isComplex():Boolean {
+					var mediate	: IMetadataTag = deepLink.host.getMetadataTagByName( "Mediate" ) || deepLink.host.getMetadataTagByName( "EventHandler" );
+					var args  : Array          = mediate ? mediate.getArg( "properties" ).value.split( /\s*,\s*/ ) : null;
+					
+					return (args.length == 1) && (matches.length > 1);	
+				}
+				
+			var matches	  :Array  = deepLink.url.match( /\{([^\{\}]*)\}/g );
+			var parameters:*      = isComplex() ?  new Object : new Array;
 			
-			for each ( var placeholder:String in placeholders ) {
-				var index:int = int( placeholder.substr( 1, placeholder.length - 2 ) ) + 1;
-				parameters[ parameters.length ] = unescape( match[ index ] );
+			for ( var j:int=0; j<matches.length; j++) 
+			{
+				var key : String = String( matches[j] ).replace( /\{/gi,"").replace( /\}/gi,"");
+				var val : *      = lookups[ j + 1 ];
+				
+				if ( parameters is Array ) parameters.push( unescape( val ) );
+				else                       parameters[ key ] = unescape( val );
 			}
 			
-			logger.debug( "incoming url change invokes {0}({1})", String(method), parameters.toString() );
-			method.apply( null, parameters );
+			// Call the method associated with [EventHandler(event="",properties="")]
+			
+			if ( method != null) 
+			{
+				logger.debug( "incoming url change invokes function({0})", utils.string.toString(parameters,",") );
+				method.apply( null, toArray(parameters) );
+			}
+			
+			// Set the Browser title
 			
 			if( deepLink.title != null ) {
-				var title : String = constructUrl( deepLink.title, parameters );
+				var title : String = supplant( deepLink.title, parameters );
 				
 				browserManager.setTitle( title );
-				logger.debug( "browserManager.setTitle({0})", title );
+				logger.debug( "browserManager.setTitle( '{0}' )", title );
 			}
 		}
 		
 		/**
-		 * Sets the url when ever a mediated method is called
+		 * When a mediated method is called, construct the deeplink url and title equivalents
+		 * The eventHandler function may have 0-n arguments; which are constructed as either:
+		 *  
+		 *   i. Array of args
+		 *       e.g.
+		 *  		  [DeepLink( url="/jump/{0}/{1}", title="State {0}!" )]
+		 *            [EventHandler(event="GotoEvent.GOTO",properties="action,options")]
+		 * 
+		 *            public function onGoto( action:String,options:String ):void {... }
+		 * 
+		 *   ii. Hashmap of field names whose values are the args
+		 *       e.g.
+		 * 			  [DeepLink( url="/jump/{action}/{options}", title="State {name}!" )]
+		 *            [EventHandler(event="GotoEvent2.GOTO",properties="details")]
+		 * 
+		 *            public function onGoto( details:Object ):void { ... }
+		 * 
+		 * To build the URL, collect the function arguments as a hashmap of name/values, then
+		 * build the URL based tokens in the url=`` template. 
+		 * 
+		 * NOTE: this process calls ::setFragment() which in turn invokes the processDeepLink() above...
 		 */
 		protected function mediateEventHandler( event:Event ):void
 		{
 			var deepLink: DeepLinkMetadataTag = DeepLinkMetadataTag( deepLinks[ mediateEventTypes.lastIndexOf( event.type ) ] );
-			var mediate	: IMetadataTag 		  = deepLink.host.getMetadataTagByName( "Mediate" ) || deepLink.host.getMetadataTagByName( "EventHandler" );
-			var args	: Array 			  = mediate.hasArg( "properties" ) ? getEventArgs( event, mediate.getArg( "properties" ).value.split( /\s*,\s*/ ) ) : null;
-			
+
 			if( deepLink != null ) {
-				var url:String = deepLink.url;
-				    url = url.replace( /\*/g, "" );
 				
-				if( args != null ) {
-					for ( var i:int = 0; i < args.length; i++ ) {
-						
-						url = url.replace( new RegExp( "\\{" + i + "\\}", "g" ), escape( args[ i ] ) );
-					}
-				}
+				var mediate	: IMetadataTag 	= deepLink.host.getMetadataTagByName( "Mediate" ) || deepLink.host.getMetadataTagByName( "EventHandler" );
+				var fields  : Array         = mediate ? mediate.getArg( "properties" ).value.split( /\s*,\s*/ ) : null;
+				var args	: Object 		= fields  ? getEventArgs( event, fields ) 							: null;
+				
+				var url		:String 		= supplant( deepLink.url.replace( /\*/g, "" ), args );
 				
 				logger.debug( "for mediated event='{0}', browserManager.setFragment( '{1}' )",event.type, url );
 				browserManager.setFragment( url );
 				
 				if( deepLink.title != null ) {
-					var title : String = constructUrl( deepLink.title, args );
+					var title : String = supplant( deepLink.title, args );
 					
 					logger.debug( "for mediated event='{0}', browserManager.setTitle( '{1}' )",event.type, title );
 					browserManager.setTitle( title );
 				}
+				
+				event.stopImmediatePropagation();
+				event.preventDefault();
 			}
 		}
 		
@@ -421,29 +493,20 @@ package ext.swizframework.processors
 		/**
 		 *
 		 */
-		protected function constructUrl( url:String, params:Array ):String
+		protected function getEventArgs( event:Event, properties:Array ):*
 		{
-			for( var i:int = 0; i < params.length; i++ )
-			{
-				url = url.replace( new RegExp( "\\{" + i + "\\}", "g" ), params[ i ] );
-			}
-			
-			return url;
-		}
-		
-		/**
-		 *
-		 */
-		protected function getEventArgs( event:Event, properties:Array ):Array
-		{
-			var args:Array = [];
-			
+			var args	  : Array   = new Array;
+				
+				function isComplex():Boolean {
+					return (args.length == 1) && (args[0] is Object) && !(args[0] is String);	
+				}
+				
 			for each( var property:String in properties )
 			{
-				args[ args.length ] = event[ property ];
+				args[ args.length ] = escapeArgs(event[ property ]);
 			}
 			
-			return args;
+			return isComplex() ? args[0] : args;
 		}
 		
 		/**
@@ -470,6 +533,31 @@ package ext.swizframework.processors
 		 */
 		protected function get logger():ILogger {
 			return Logger.getLogger(this);
+		}
+		
+		protected function escapeArgs(val:*):* {
+			var result : * = null;
+			
+			if (val is String) {
+				
+				result = enableEscape ? escape( String(val) ) : val;
+				
+			} else if (val is Object) {
+				
+				var tmp : Object = new Object;
+				
+				for (var key:* in val) 
+				{
+					var kVal:* = val[key] as String;
+					
+					tmp[key] = 	!kVal 			? val[key] 			: 
+								enableEscape	? escape( kVal )	: kVal;
+				}
+				
+				result = tmp;
+			}
+			
+			return result;
 		}
 				
 	}
