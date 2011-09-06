@@ -38,18 +38,22 @@ package ext.swizframework.utils.chain
 		{
 				// Internal completion handler
 				function onComplete_idle(event:TimerEvent):void {
-					timer.removeEventListener( TimerEvent.TIMER_COMPLETE,onComplete_idle );
+					
+					_timer.removeEventListener( TimerEvent.TIMER_COMPLETE,onComplete_idle );
+					_timer = null;
 					
 					// Announce that this step has finished/completed
 					complete();
 				}
 				
-			var timer : Timer = new Timer(interval);
-				timer.addEventListener(TimerEvent.TIMER_COMPLETE,onComplete_idle)
+			_timer = new Timer(interval,1);
+			_timer.addEventListener(TimerEvent.TIMER_COMPLETE,onComplete_idle)
 					
-				timer.start();
+			_timer.start();
 
 		}
+		
+		protected var _timer : Timer;
 		
 	}
 }

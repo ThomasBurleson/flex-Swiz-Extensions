@@ -36,6 +36,8 @@ package ext.swizframework.metadata
 		
 		protected var _title:String;
 		
+		protected var _suspend:String;
+		
 		// ========================================
 		// public properties
 		// ========================================
@@ -48,6 +50,15 @@ package ext.swizframework.metadata
 		public function get title():String
 		{
 			return _title;
+		}
+		
+		/**
+		 * Feature used to suspend or activate the DeepLinkProcessor
+		 * Any [DeepLink(suspend="true|false")] can toggle the processor activity.
+		 */
+		public function get suspend():String
+		{
+			return _suspend;
 		}
 		
 		// ========================================
@@ -77,6 +88,11 @@ package ext.swizframework.metadata
 			if( hasArg( "title" ) )
 			{
 				_title = getArg( "title" ).value;
+			}
+			
+			if( hasArg( "suspend" ) )
+			{
+				_suspend = getArg( "suspend" ).value;
 			}
 		}
 		
