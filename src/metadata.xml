@@ -2,34 +2,37 @@
 <annotations version="1.0">
 
 	<metadata name="Log" description="Marks a property in which an ILogger reference should be injected">
+
 		<context name="variable" />
 		<context name="setter" />
-		<context name="method" />
 		
-		<attribute name="scope" 
-				   type="String"
-				   values="global,local"
-				   defaultValue="global"
-				   required="false" 
-				   description="Marks a property in which an ILogger reference should be injected" />
 	</metadata>
 	
 	<metadata name="DeepLink" description="Marks this method as syncrhonized with Browser via SWFAddress">
+
 		<context name="method" />
 		
 		<attribute name="url" 
 				   type="String"
-				   values="global,local"
+				   values=""
 				   defaultValue=""
 				   required="false" 
-				   description="Browser URL to watch and auto-invoke this method" />
+				   description="Browser URL pattern to use to determine if method should be auto-invoked with url tokens as method arguments" />
 
 		<attribute name="title" 
 				   type="String"
-				   values="global,local"
+				   values=""
 				   defaultValue=""
 				   required="false" 
 				   description="Title of browser when url matches" />
+				   
+		<attribute name="suspend" 
+				   type="String"
+				   values="true,false"
+				   defaultValue=""
+				   required="false" 
+				   description="Used to allow method call to easily activate/deactivate the DeepLinkProcessor activity." />
+				   				   
 	</metadata>
 	
 </annotations>

@@ -621,13 +621,13 @@ package ext.swizframework.processors
 					return (args.length == 1) && (args[0] is Object) && !(args[0] is String);	
 				}
 				
-			for each( var property:String in keys || [ ])
+			for each( var property:String in keys )
 			{
 				args[ args.length ] = escapeValue( event[ property ]);
 			}
 			
-			return 	(keys == null)	? null	  :
-					isComplex() 	? args[0] : args;
+			return 	(keys.length < 1 )	? { }	  :
+					isComplex() 		? args[0] : args;
 		}
 		
 		/**
@@ -690,8 +690,11 @@ package ext.swizframework.processors
 
 
 import ext.swizframework.metadata.DeepLinkMetadataTag;
+
 import flash.utils.Dictionary;
+
 import org.swizframework.reflection.IMetadataTag;
+import org.swizframework.reflection.MetadataArg;
 
 class DeepLinkItem {
 	
@@ -723,9 +726,10 @@ class DeepLinkItem {
 	 * the property names specified. 
 	 */
 	public function get methodArgs():Array {
-		var mediate    : IMetadataTag = mediations && mediations.length ? mediations[0] as IMetadataTag : null;
+		var mediate    : IMetadataTag = mediations && mediations.length ? mediations[0] as IMetadataTag  : null;
+		var args       : MetadataArg  = mediate 						? mediate.getArg( "properties" ) : null;
 		
-		return mediate ? mediate.getArg( "properties" ).value.split( /\s*,\s*/ ) : null;
+		return args ? args.value.split( /\s*,\s*/ ) : [ ];
 	}
 	
 	/**
