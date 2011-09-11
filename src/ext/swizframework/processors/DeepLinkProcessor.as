@@ -24,16 +24,13 @@ package ext.swizframework.processors
 {
 	import ext.swizframework.metadata.DeepLinkMetadataTag;
 	import ext.swizframework.utils.SWFAddressManager;
-	import ext.swizframework.utils.logging.Logger;
 	
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	
 	import mx.events.BrowserChangeEvent;
-	import mx.logging.ILogger;
 	import mx.managers.BrowserManager;
 	import mx.managers.IBrowserManager;
-	import mx.utils.StringUtil;
 	
 	import org.swizframework.core.Bean;
 	import org.swizframework.core.ISwiz;
@@ -44,8 +41,10 @@ package ext.swizframework.processors
 	import org.swizframework.reflection.Constant;
 	import org.swizframework.reflection.IMetadataTag;
 	import org.swizframework.reflection.MetadataArg;
+	import org.swizframework.reflection.MethodParameter;
 	import org.swizframework.reflection.TypeCache;
 	import org.swizframework.reflection.TypeDescriptor;
+	import org.swizframework.utils.logging.SwizLogger;
 	
 	import utils.string.supplant;
 	import utils.string.toArray;
@@ -141,7 +140,10 @@ package ext.swizframework.processors
 		/**
 		 * Was the most recent browser URLChange cached (due to suspension)? 
 		 */
-		protected var lastURLChange : Event;
+		protected var firstURLChange : BrowserChangeEvent;
+		
+
+		protected var logger:SwizLogger = SwizLogger.getLogger( this );
 		
 		// ========================================
 		// constructor
@@ -198,7 +200,7 @@ package ext.swizframework.processors
 			var deepLink:DeepLinkMetadataTag = DeepLinkMetadataTag( metadataTag );
 			var method	:Function 			 = bean.source[ metadataTag.host.name ] as Function;
 			
-				logger.debug( supplant("setup link url='{url}' on {name}", {url: deepLink.url, name:metadataTag.host.name} ) );
+				logger.debug( supplant("DeepLinkProcessor set up [DeepLink] for '{url}' on '{name}'", {url: deepLink.url, name:metadataTag.host.name} ) );
 			
 			addDeepLink( deepLink, method );
 		}
@@ -210,7 +212,7 @@ package ext.swizframework.processors
 		{
 			var deepLink:DeepLinkMetadataTag = DeepLinkMetadataTag( metadataTag );
 			
-				logger.debug( supplant("teardown link url='{url}' on {name}", {url: deepLink.url, name:metadataTag.host.name}) );
+				logger.debug( supplant("DeepLinkProcessor teardown [DeepLink] for '{url}' on {name}", {url: deepLink.url, name:metadataTag.host.name}) );
 			
 			removeDeepLink( deepLink );
 		}
@@ -223,7 +225,7 @@ package ext.swizframework.processors
 		/**
 		 * Executed when the browser URL changes
 		 */
-		protected function onBrowserURLChange( event:Event ):void {
+		protected function onBrowserURLChange( event:BrowserChangeEvent ):void {
 			
 				/**
 				 *  Process browser URL changes by notifying all url `matching` [DeepLink] methods
@@ -240,23 +242,27 @@ package ext.swizframework.processors
 					return url;
 				}
 			
-			// Ignore event is suspended
+			event.url = extractURL();
 			
-			lastURLChange = this.suspended ? event : null;
-			if ( lastURLChange != null ) 	return;
+			// Is this a deepLink fragment URL ?
 			
-			var url : String = extractURL();
-			
-  			if (url != "") 
+  			if (event.url != "" && event.url != "/" ) 
 			{
-				logger.debug( "onBrowserURLChange(url='{0}')",url );
+				if ( suspended && !firstURLChange ) {
+					// Cache event if the processor is suspended
+					
+					firstURLChange = event;
+					return;
+				}
+				
+				logger.debug( "DeepLinkProcessor::onBrowserURLChange(url='{0}')", event.url );
 
 				// Now process all tag instances whose URL pattern matches
 				
 				for each ( var it:DeepLinkItem in registry )
 				{
-					if ( it.shouldProcessURL( url ) ) 
-						processLinkURLChange( it, url );
+					if ( it.shouldProcessURL( event.url ) ) 
+						processLinkURLChange( it, event.url );
 				}
 			}
 		}
@@ -302,7 +308,7 @@ package ext.swizframework.processors
 		 */
 		protected function addDeepLink( deepLink:DeepLinkMetadataTag, method:Function ):void
 		{
-			logger.debug( supplant("addDeepLink(url='{url}',title='{title}')", deepLink ) );
+			logger.debug( supplant("DeepLinkProcessor::addDeepLink( url='{url}',title='{title}' )", deepLink ) );
 			
 				function buildLinkItem( ): DeepLinkItem
 				{
@@ -329,7 +335,7 @@ package ext.swizframework.processors
 		 * Remove a URL mapping
 		 */
 		protected function removeDeepLink( deepLink:DeepLinkMetadataTag ):void {
-			logger.debug( supplant("removeDeepLink(url='{url}',title='{title}')", deepLink ) );
+			logger.debug( supplant("DeepLinkProcessor::removeDeepLink( url='{url}',title='{title}' )", deepLink ) );
 			
 			var item : DeepLinkItem = registry[ deepLink ];
 			if ( item != null ) 
@@ -352,7 +358,7 @@ package ext.swizframework.processors
 				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag();
 				    mediateTag.copyFrom(srcTag);
 				
-					logger.debug( "addMediate(event='{0}')", mediateTag.event );	
+					logger.debug( "DeepLinkProcessor::addMediate( event='{0}' )", mediateTag.event );	
 					
 				if( mediateTag.event.substr( -2 ) == ".*" )
 				{
@@ -381,7 +387,7 @@ package ext.swizframework.processors
 				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag();
 					mediateTag.copyFrom(srcTag);
 				
-					logger.debug( "removeMediate(event='{0}')", mediateTag.event );
+					logger.debug( "DeepLinkProcessor::removeMediate( event='{0}' )", mediateTag.event );
 				
 				if( mediateTag.event.substr( -2 ) == ".*" ) {
 					
@@ -405,7 +411,7 @@ package ext.swizframework.processors
 		 */
 		protected function addEventHandler( deepLink:DeepLinkMetadataTag, eventType:String ):void
 		{
-			logger.debug( "addEventHandler( event='{0}' )",eventType );
+			logger.debug( "DeepLinkProcessor::addEventHandler( event='{0}' )",eventType );
 			
 			var link : DeepLinkItem = registry[ deepLink ] as DeepLinkItem;
 				
@@ -432,7 +438,7 @@ package ext.swizframework.processors
 			
 			if ( clearListener == true) 
 			{
-				logger.debug( "remove eventHandler( event='{0}' )",eventType );
+				logger.debug( "DeepLinkProcessor::remove eventHandler( event='{0}' )",eventType );
 				
 				swiz.dispatcher.removeEventListener( eventType, onInterceptEventHandler );
 			}
@@ -465,7 +471,7 @@ package ext.swizframework.processors
 				 * or multiple arguments?
 				 */
 				function isComplexArg():Boolean {
-					return (link.methodArgs.length == 1) && (fields.length > 1);	
+					return (link.eventMethodArgs.length == 1) && (fields.length > 1);	
 				}
 				
 			var fields    :Array  = link.urlTokens;
@@ -486,7 +492,7 @@ package ext.swizframework.processors
 				var title : String = supplant( link.title, parameters );
 				
 				browserManager.setTitle( title );
-				logger.debug( "browserManager.setTitle( '{0}' )", title );
+				logger.debug( "DeepLinkProcessor::processLinkURLChange browserManager.setTitle( '{0}' )", title );
 			}
 			
 			// Call the method associated with [EventHandler(event="",properties="")]
@@ -496,7 +502,7 @@ package ext.swizframework.processors
 			
 			if ( link.method != null) 
 			{
-				logger.debug( "incoming url change invokes function({0})", utils.string.toString(parameters,",") );
+				logger.debug( "DeepLinkProcessor::processLinkURLChange incoming url change invokes function({0})", utils.string.toString(parameters,",") );
 
 				/**
 				 * Please notice that no argument type creation is attempted!
@@ -535,22 +541,26 @@ package ext.swizframework.processors
 		 * 
 		 */
 		protected function processLinkEvent(link:DeepLinkItem, event:Event):Boolean {
-			var processed : Boolean = false;
+				
+			// Activate or deactivate processor based on current link directives
 			
 			updateSuspension(link);
 			
-			if( link && !this.suspended ) {
-				
-				if ( lastURLChange != null )
-					onBrowserURLChange( lastURLChange );
-				
+			// Process possible startup link
+			
+			var processed : Boolean = processStartupLink(link);
+			
+			// Process normal DeepLink trigger
+			
+			if( !processed && link) {
+								
 				var args : Object = getEventArgs( event, link );
 				
 				if( link.title != null ) 
 				{
 					var title : String = supplant( link.title, args );
 					
-					logger.debug( "for mediated event='{0}', browserManager.setTitle( '{1}' )",event.type, title );
+					logger.debug( "DeepLinkProcessor::processLinkEvent for mediated event='{0}', browserManager.setTitle( '{1}' )",event.type, title );
 					browserManager.setTitle( title );
 				}
 				
@@ -558,11 +568,62 @@ package ext.swizframework.processors
 				{
 					var url		:String 		= supplant( link.url.replace( /\*/g, "" ), args );
 					
-					logger.debug( "for mediated event='{0}', browserManager.setFragment( '{1}' )",event.type, url );
+					logger.debug( "DeepLinkProcessor::processLinkEvent for mediated event='{0}', browserManager.setFragment( '{1}' )",event.type, url );
 					browserManager.setFragment( url );
+					
+					processed = true;
 				}
 				
-				processed = true;
+			}
+			
+			return processed;
+		}
+		
+		
+		/**
+		 * If the DeepLinkProcessor started in suspended-mode, then when activated
+		 * the `last` browser URL change should be processed immediately.
+		 *  
+		 * @param link DeepLinkItem associated with the [DeepLink(suspend="false")]
+		 * @return Boolean True if a startup URL was processed.
+		 * 
+		 */
+		protected function processStartupLink(link:DeepLinkItem):Boolean 
+		{
+			var event     : BrowserChangeEvent 	= firstURLChange;
+			var processed : Boolean             = false;
+			
+			if ( !suspended && link && event ) 
+			{
+				var parameters 	: Array  			= link.parameters || [ ];
+				var arg         : MethodParameter 	= (parameters.length == 1) 	? MethodParameter(parameters[0]) : null;
+				var argInst     : *                 = arg 						? new arg.type() 				 : null;
+				
+				firstURLChange 	= null;
+				
+				if ( event.url != null )
+				{
+					processed = true;	// Do this BEFORE actions below
+					
+					if ( argInst is String )
+					{
+						/**
+						 * Call the method associated with the [DeepLink(suspend="false")]
+						 * if it takes 1 argument. This allows the application to introspect the URL
+						 * and manually respond.
+						 */
+						link.method.apply( null, [ event.url] );
+						
+					} else {
+						
+						/** 
+						 * Or simply allow the browser URL change to process normally and call all the EventHandler methods
+						 * associated with the [DeepLink(url=<pattern>)] items whose URL pattern matches the lastURL
+						 */
+						onBrowserURLChange( event );
+						
+					}
+				}
 			}
 			
 			return processed;
@@ -614,7 +675,7 @@ package ext.swizframework.processors
 		 */
 		protected function getEventArgs( event:Event, link : DeepLinkItem ):*
 		{
-			var keys  : Array  = link.methodArgs;
+			var keys  : Array  = link.eventMethodArgs;
 			var args  : Array  = [ ];
 				
 				function isComplex():Boolean {
@@ -623,10 +684,11 @@ package ext.swizframework.processors
 				
 			for each( var property:String in keys )
 			{
-				args[ args.length ] = escapeValue( event[ property ]);
+				if (event.hasOwnProperty( property ) )
+					args[ args.length ] = escapeValue( event[ property ]);
 			}
 			
-			return 	(keys.length < 1 )	? { }	  :
+			return 	(args.length < 1 )	? { }	  :
 					isComplex() 		? args[0] : args;
 		}
 		
@@ -646,15 +708,6 @@ package ext.swizframework.processors
 			}
 		}
 		
-		
-		/**
-		 * On-demand access to the ILogger for LogProcessor class  
-		 * @return 
-		 * 
-		 */
-		protected function get logger():ILogger {
-			return Logger.getLogger(this);
-		}
 		
 		protected function escapeValue(val:*):* {
 			var result : * = null;
@@ -695,6 +748,7 @@ import flash.utils.Dictionary;
 
 import org.swizframework.reflection.IMetadataTag;
 import org.swizframework.reflection.MetadataArg;
+import org.swizframework.reflection.MetadataHostMethod;
 
 class DeepLinkItem {
 	
@@ -720,12 +774,21 @@ class DeepLinkItem {
 	 * Method to invoke when onBrowserURLChange() is detected 
 	 */
 	public function get method()   : Function			{	return _method;										}
-	
+
 	/**
 	 * When intercepting an [EventHandler(event="",properties="")], extract 
 	 * the property names specified. 
 	 */
-	public function get methodArgs():Array {
+	public function get parameters():Array {
+		return MetadataHostMethod(_deepLink.host).parameters;
+	}
+	
+
+	/**
+	 * When intercepting an [EventHandler(event="",properties="")], extract 
+	 * the property names specified. 
+	 */
+	public function get eventMethodArgs():Array {
 		var mediate    : IMetadataTag = mediations && mediations.length ? mediations[0] as IMetadataTag  : null;
 		var args       : MetadataArg  = mediate 						? mediate.getArg( "properties" ) : null;
 		
@@ -813,7 +876,7 @@ class DeepLinkItem {
 		_deepLink   = tag;
 		_method 	= method;
 		
-		buildRegExp (tag.url);
+		buildRegExp (tag.url, tag.pattern);
 	}
 	
 	// ***************************************************************************
@@ -825,14 +888,18 @@ class DeepLinkItem {
 	 * @param url String specified in the [DeepLink(url=`xxx`)] metadata tag
 	 * 
 	 */
-	protected function buildRegExp( url:String ) : void{
+	protected function buildRegExp( url:String, pattern:String = null ) : void{
+		
 		url ||= "";
 		
-		// If no URL then, no pattern matching or processing of link (obviously) 
-		// NOTE: need to allow the last URL parameter to be optional
-		
-		var pattern :String = url.replace( /[\\\+\?\|\[\]\(\)\^\$\.\,\#]{1}/g, "\$1" ).replace( /\*/g, ".*" ).replace( /\{.+?\}/g, "(.+?)" ) + "$";
+		if (pattern == null) {
+			
+			// If no URL then, no pattern matching or processing of link (obviously) 
+			// NOTE: need to allow the last URL parameter to be optional
+			
+			pattern = url.replace( /[\\\+\?\|\[\]\(\)\^\$\.\,\#]{1}/g, "\$1" ).replace( /\*/g, ".*" ).replace( /\{.+?\}/g, "(.+?)" ) + "$";
 			pattern = "^" + pattern.replace( /\(\.\+\?\)\$/g, "(.*?)" + "$" );
+		}
 			
 		_regexp 	= (url != "") ? new RegExp(pattern) 			: null;	
 		_urlTokens 	= (url != "") ? url.match( /\{([^\{\}]*)\}/g ) 	: null;

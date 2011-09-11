@@ -32,6 +32,8 @@ package ext.swizframework.metadata
 		// protected properties
 		// ========================================
 		
+		protected var _pattern:String;
+		
 		protected var _url:String;
 		
 		protected var _title:String;
@@ -42,6 +44,31 @@ package ext.swizframework.metadata
 		// public properties
 		// ========================================
 		
+		
+		/**
+		 * String matching fragment; when simple token matching
+		 * is not sufficient. This is the master pattern/RegExp
+		 * to be used in the url matching process
+		 *  
+		 * 	e.g.  ^/test/(.+?)/(.*?)$
+		 * 
+		 * Normally, this pattern is derived from the URL.
+		 * But if needed this option supercede the derivation.
+		 * 
+		 * @return String 
+		 * 
+		 */
+		public function get pattern():String 
+		{
+			return _pattern;
+		}
+		
+		/**
+		 * String matching fragment with simple tokens
+		 * 	e.g.  /test/{0}/{1}
+		 * 
+		 * @return String 
+		 */
 		public function get url():String
 		{
 			return _url;
@@ -93,6 +120,11 @@ package ext.swizframework.metadata
 			if( hasArg( "suspend" ) )
 			{
 				_suspend = getArg( "suspend" ).value;
+			}
+			
+			if( hasArg( "pattern" ) )
+			{
+				_suspend = getArg( "pattern" ).value;
 			}
 		}
 		
