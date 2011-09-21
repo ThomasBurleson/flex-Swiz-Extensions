@@ -353,7 +353,7 @@ package ext.swizframework.processors
 		{
 			// For each [Mediate] or [EventHandler] attached in this bean...
 			
-			for each (var srcTag in  getItemFor(deepLink).mediations )
+			for each (var srcTag:IMetadataTag in  getItemFor(deepLink).mediations )
 			{
 				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag();
 				    mediateTag.copyFrom(srcTag);
@@ -382,7 +382,7 @@ package ext.swizframework.processors
 		 */
 		protected function removeMediate( deepLink:DeepLinkMetadataTag ):void
 		{
-			for each (var srcTag in getItemFor(deepLink).mediations )
+			for each (var srcTag:IMetadataTag in getItemFor(deepLink).mediations )
 			{
 				var mediateTag : EventHandlerMetadataTag = new EventHandlerMetadataTag();
 					mediateTag.copyFrom(srcTag);
