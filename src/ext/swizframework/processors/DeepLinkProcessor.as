@@ -471,12 +471,12 @@ package ext.swizframework.processors
 				 * or multiple arguments?
 				 */
 				function isComplexArg():Boolean {
-					return (link.eventMethodArgs.length == 1) && (fields.length > 1);	
+					return (link.eventMethodArgs.length == 1) && (link.urlTokens.length > 1);	
 				}
 				
-			var fields    :Array  = link.urlTokens;
 			var values    :Array  = link.extractURLValues(url);
-			var parameters:*      = isComplexArg() ?  new Object : new Array;
+			var fields    :Array  = isComplexArg() ?  link.stripFields(link.urlTokens) 	: link.urlTokens;
+			var parameters:*      = isComplexArg() ?  new Object 						: new Array;
 			
 			for ( var j:int=0; j<fields.length; j++) 
 			{
@@ -569,9 +569,16 @@ package ext.swizframework.processors
 					var url		:String 		= supplant( link.url.replace( /\*/g, "" ), args );
 					
 					logger.debug( "DeepLinkProcessor::processLinkEvent for mediated event='{0}', browserManager.setFragment( '{1}' )",event.type, url );
-					browserManager.setFragment( url );
 					
-					processed = true;
+					// NOTE: onBrowserURLChange() will only be triggered if the fragments are different 
+					//       So if no change, then processed == false so [EventHandler] will still be called
+					//       in onInterceptEventHandler()
+					
+					if ( browserManager.fragment != url )
+					{
+						browserManager.setFragment( url );
+						processed = true;
+					}
 				}
 				
 			}
@@ -854,16 +861,27 @@ class DeepLinkItem {
 	 */
 	public function extractURLValues( url:String ) : Array		
 	{ 
-		var results: Array = [ ];
-		var buffer : Array = _regexp ? url.match( _regexp ) : null;
+		var buffer : Array = _regexp ? url.match( _regexp ) : [ ];
 		
-		if ( buffer != null ){
+		if ( buffer.length ) 	
+			buffer.shift();
+		
+		return stripFields( buffer  );
+	}
+	
+	public function stripFields(fields:Array):Array 
+	{
+		var results: Array = null;
+		
+		if ( fields && fields.length ){
+		
+			results = [ ];
 			
-			for (var j:int=1; j<buffer.length; j++) 
-				results.push( String(buffer[j]).replace( /\{/gi,"").replace( /\}/gi,"") );
+			for (var j:int=0; j<fields.length; j++) 
+				results.push( String(fields[j]).replace( "{","").replace( "}","") );
 		}
-			
-		return buffer ? results : null;
+		
+		return results;
 	}
 	
 		
