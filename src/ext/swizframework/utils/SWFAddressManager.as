@@ -68,10 +68,10 @@ package ext.swizframework.utils
 		/**
 		 * Delimiter to be used between the root title and any other title suffixes 
 		 */
-		public var delimiter : String = ">> ";
+		public var delimiter : String = " >> ";
 		
 		/**
-		 * Callback function (event:BrowserChangeEvent):void to handle external
+		 * Callback `function (event:BrowserChangeEvent):void` to handle external
 		 * changes in the browser URL. This function should be assigned a reference to the handler inside the 
 		 * DeepLinkProcessor instance
 		 */		
@@ -87,7 +87,7 @@ package ext.swizframework.utils
 		public function get title():String				{	return SWFAddress.getTitle();				}
 		public function get fragment():String			{	return SWFAddress.getValue();				}
 		
-		public function setTitle(value:String):void		{	SWFAddress.setTitle(StringUtil.substitute("{0}{1}{2}",[title,delimiter,value]));					}
+		public function setTitle(value:String):void		{	SWFAddress.setTitle(StringUtil.substitute("{0}{1}{2}",[baseTitle,delimiter,value]));					}
 		public function setFragment(value:String):void	{	SWFAddress.setValue(value);					}
 		
 		// ****************************************************************************************************

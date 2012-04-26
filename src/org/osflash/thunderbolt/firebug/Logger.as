@@ -20,6 +20,7 @@ package org.osflash.thunderbolt.firebug
 {
 	import flash.external.ExternalInterface;
 	import flash.system.Capabilities;
+	import flash.system.Security;
 	
 	/**
 	* Thunderbolts AS3 Logger class
@@ -172,7 +173,7 @@ package org.osflash.thunderbolt.firebug
 		public static function send (msg: String, level:String): void
 		{
 			if ( _isFireBug == true )	ExternalInterface.call("console." + level, msg);			
-			else						trace ( level + " " + msg);	
+			else						trace ( msg);	
 
 		}
 		
@@ -217,10 +218,14 @@ package org.osflash.thunderbolt.firebug
 				// check if firebug installed and enabled
 				var requiredMethodsCheck:String = "";
 				for each (var method:String in FIREBUG_METHODS) {
+					
 					// Most browsers report typeof function as 'function'
 					// Internet Explorer reports typeof function as 'object'
-					requiredMethodsCheck += " && (typeof console." + method + " == 'function' || typeof console." + method + " == 'object') "
+					requiredMethodsCheck += " && (typeof window.console." + method + " == 'function' || typeof window.console." + method + " == 'object') ";
 				}
+				
+				Security.allowDomain("*");
+				
 				if ( ExternalInterface.call( "function(){ return typeof window.console == 'object' " + requiredMethodsCheck + "}" ) )
 					return true;
 			}

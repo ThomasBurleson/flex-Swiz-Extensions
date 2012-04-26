@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<design version="2">
+
+    <namespaces>
+        <namespace prefix="se" uri="http://ext.swizframework.org" />
+    </namespaces>
+ 
+    <categories>
+        <category id="SwizExt" label="Swiz Framework Extensions" defaultExpand="true" />
+    </categories>
+    
+    <components>
+    	<component name="AbstractPresentationModel" displayName="AbstractPresentationModel" namespace="se" category="SwizExt" />
+        <component name="DeepLinkProcess" 			displayName="DeepLinkProcess" 			namespace="se" category="SwizExt" />
+        <component name="LogProcessor" 				displayName="LogProcessor" 				namespace="se" category="SwizExt" />
+        <component name="GlobalExceptionLogger" 	displayName="GlobalExceptionLogger" 	namespace="se" category="SwizExt" />
+        <component name="Logger" 					displayName="Logger" 					namespace="se" category="SwizExt" />
+        <component name="Log4FxTarget" 				displayName="Log4FxTarget" 				namespace="se" category="SwizExt" />
+        <component name="ThunderBoltTarget" 		displayName="ThunderBoltTarget" 		namespace="se" category="SwizExt" />
+        <component name="AsyncInterceptor" 			displayName="AsyncInterceptor"			namespace="se" category="SwizExt" />
+        <component name="SWFAddressManager" 		displayName="SWFAddressManager" 		namespace="se" category="SwizExt" />
+    </components>
+    
+</design>

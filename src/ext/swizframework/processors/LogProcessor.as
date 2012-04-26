@@ -141,7 +141,7 @@ package ext.swizframework.processors
 		// ========================================
 		
 		/**
-		 * Set the processing priority so the [Log] processor runs BEFORE the [Inject] or [Mediate]
+		 * Set the processing priority so the [Log] processor runs BEFORE the [Inject] or [EventHandler]
 		 */
 		override public function get priority():int {
 			return ProcessorPriority.INJECT + 10;

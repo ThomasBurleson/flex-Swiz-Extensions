@@ -2,19 +2,15 @@
 <componentPackage>
 	
 	<!-- Custom Processors -->
-	<component class="ext.swizframework.processors.DeepLinkProcessor" />
-	<component class="ext.swizframework.processors.LogProcessor" />
-
-	<!-- MX Logging Utils -->
-	<component class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
-	<component class="ext.swizframework.utils.logging.Logger" />	
-	
-	<component class="com.farata.log4fx.Log4FxTarget" />
-	<component class="org.osflash.thunderbolt.ThunderBoltTarget" />
-
-	<!-- Custom Utilities -->
-	<component class="ext.swizframework.utils.AsyncInterceptor" />
-	<component class="ext.swizframework.utils.SWFAddressManager" />
+	<component id="AbstractPresentationModel" 	class="ext.swizframework.core.AbstractPresentationModel" />
+	<component id="DeepLinkProcess" 		    class="ext.swizframework.processors.DeepLinkProcessor" />
+	<component id="LogProcessor" 			    class="ext.swizframework.processors.LogProcessor" />
+	<component id="GlobalExceptionLogger" 	    class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
+	<component id="Logger" 					    class="ext.swizframework.utils.logging.Logger" />	
+	<component id="Log4FxTarget" 			    class="com.farata.log4fx.Log4FxTarget" />
+	<component id="ThunderBoltTarget" 		    class="org.osflash.thunderbolt.ThunderBoltTarget" />
+	<component id="AsyncInterceptor" 		    class="ext.swizframework.utils.AsyncInterceptor" />
+	<component id="SWFAddressManager" 		    class="ext.swizframework.utils.SWFAddressManager" />
 	
 	
 </componentPackage>

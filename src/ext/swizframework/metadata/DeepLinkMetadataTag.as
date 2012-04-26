@@ -32,14 +32,43 @@ package ext.swizframework.metadata
 		// protected properties
 		// ========================================
 		
+		protected var _pattern:String;
+		
 		protected var _url:String;
 		
 		protected var _title:String;
+		
+		protected var _suspend:String;
 		
 		// ========================================
 		// public properties
 		// ========================================
 		
+		
+		/**
+		 * String matching fragment; when simple token matching
+		 * is not sufficient. This is the master pattern/RegExp
+		 * to be used in the url matching process
+		 *  
+		 * 	e.g.  ^/test/(.+?)/(.*?)$
+		 * 
+		 * Normally, this pattern is derived from the URL.
+		 * But if needed this option supercede the derivation.
+		 * 
+		 * @return String 
+		 * 
+		 */
+		public function get pattern():String 
+		{
+			return _pattern;
+		}
+		
+		/**
+		 * String matching fragment with simple tokens
+		 * 	e.g.  /test/{0}/{1}
+		 * 
+		 * @return String 
+		 */
 		public function get url():String
 		{
 			return _url;
@@ -48,6 +77,15 @@ package ext.swizframework.metadata
 		public function get title():String
 		{
 			return _title;
+		}
+		
+		/**
+		 * Feature used to suspend or activate the DeepLinkProcessor
+		 * Any [DeepLink(suspend="true|false")] can toggle the processor activity.
+		 */
+		public function get suspend():String
+		{
+			return _suspend;
 		}
 		
 		// ========================================
@@ -77,6 +115,16 @@ package ext.swizframework.metadata
 			if( hasArg( "title" ) )
 			{
 				_title = getArg( "title" ).value;
+			}
+			
+			if( hasArg( "suspend" ) )
+			{
+				_suspend = getArg( "suspend" ).value;
+			}
+			
+			if( hasArg( "pattern" ) )
+			{
+				_suspend = getArg( "pattern" ).value;
 			}
 		}
 		

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<annotations version="1.0">
+
+	<metadata name="Log" description="Marks a property in which an ILogger reference should be injected">
+
+		<context name="variable" />
+		<context name="setter" />
+		
+	</metadata>
+	
+	<metadata name="DeepLink" description="Marks this method as syncrhonized with Browser via SWFAddress">
+
+		<context name="method" />
+		
+		<attribute name="url" 
+				   type="String"
+				   values=""
+				   defaultValue=""
+				   required="false" 
+				   description="Browser URL pattern to use to determine if method should be auto-invoked with url tokens as method arguments" />
+
+		<attribute name="title" 
+				   type="String"
+				   values=""
+				   defaultValue=""
+				   required="false" 
+				   description="Title of browser when url matches" />
+				   
+		<attribute name="suspend" 
+				   type="String"
+				   values="true,false"
+				   defaultValue=""
+				   required="false" 
+				   description="Used to allow method call to easily activate/deactivate the DeepLinkProcessor activity." />
+				   				   
+	</metadata>
+	
+</annotations>
+
