@@ -140,8 +140,8 @@ package ext.swizframework.utils.chain
 		 */
 		static public function createAsyncOperation(idleTime:Number, events:Array, dispatcher:IEventDispatcher, mode:String = ChainType.SEQUENCE, stopOnError:Boolean = true):IAsynchronousOperation {
 			var chain : IChain = ThrottledEventChain.createThrottledChain(idleTime, events, dispatcher, mode, stopOnError);
-			
-			return new AsynchronousChainOperation( chain.start() );
+			    chain.start();
+			return new AsynchronousChainOperation( chain );
 		}		
 	}
 }
