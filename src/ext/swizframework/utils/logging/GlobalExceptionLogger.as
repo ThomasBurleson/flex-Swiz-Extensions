@@ -25,12 +25,17 @@ package ext.swizframework.utils.logging
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.events.UncaughtErrorEvent;
+	import flash.events.UncaughtErrorEvents;
 	
-	import mx.logging.ILogger;
-	import mx.logging.ILoggingTarget;
-	import mx.logging.LogEventLevel;
-	import mx.logging.targets.TraceTarget;
+	import mx.core.FlexGlobals;
 	import mx.managers.ISystemManager;
+	import mx.managers.SystemManager;
+	
+	import org.swizframework.utils.logging.SwizLogEvent;
+	import org.swizframework.utils.logging.SwizLogEventLevel;
+	import org.swizframework.utils.logging.SwizLogger;
+	import org.swizframework.utils.logging.SwizTraceTarget;
 	
 	/**
 	 * For use with Flex SDK 4 and FlashPlayer 10.1 or higher to catch all
@@ -48,7 +53,8 @@ package ext.swizframework.utils.logging
 	[MIXIN]
 	public class GlobalExceptionLogger
 	{
-		 public var loggingTarget  : ILoggingTarget = null;
+		 public var loggingTarget : SwizTraceTarget;
+		
 		 public var preventDefault : Boolean 		= false;
 		 
 		 public function get isReady() : Boolean {
@@ -62,7 +68,7 @@ package ext.swizframework.utils.logging
 		  * @param loggingTarget ILoggingTarget instance
 		  * 
 		  */
-		 public function GlobalExceptionLogger(preventDefault:Boolean=false,loggingTarget:ILoggingTarget=null) {
+		 public function GlobalExceptionLogger(preventDefault:Boolean=false,loggingTarget:SwizTraceTarget=null) {
 			 this.preventDefault = preventDefault;
 			 this.loggingTarget  = loggingTarget;
 			 
@@ -92,15 +98,19 @@ package ext.swizframework.utils.logging
 		 * to remove compile-time dependencies on Flex 4 / FP 10.1 requirements
 		 */
 		private function initUncaughtExceptions():void {
+			_loaderInfo ||= SystemManager.getSWFRoot(this).loaderInfo;
+			
 			if (_loaderInfo != null) {
 				if (_loaderInfo.hasOwnProperty("uncaughtErrorEvents")) {
 					var dispatcher : IEventDispatcher = _loaderInfo["uncaughtErrorEvents"] as IEventDispatcher;
 					if (dispatcher != null) {
-						dispatcher.addEventListener(UNCAUGHT_ERROR,	onUncaughtError);
+						dispatcher.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR,	onUncaughtError);
 					}
 				}
 			}
 		}
+		
+		
 		/**
 		 * Global Handler for uncaught errors/exceptions simply logs the error
 		 *  
@@ -108,7 +118,7 @@ package ext.swizframework.utils.logging
 		 * 
 		 */
 		private function onUncaughtError(event:Event):void {
-			var logger : ILogger = this.getLogger();
+			var logger : SwizLogger = this.getLogger();
 			if (event.hasOwnProperty("error")) {
 				var info   : Error   = event["error"] as Error;
 				
@@ -123,19 +133,16 @@ package ext.swizframework.utils.logging
 		 * Build a default LoggingTarget if not specified in the GlobalExceptionLogger instantiation.
 		 * A default LoggingTarget is constructed 1x if not already specified; when the 1st unCaughtError occurs 
 		 */
-		private function getLogger() : ILogger {
-			var results : ILogger = Logger.getLogger("UncaughtException");
+		private function getLogger() : SwizLogger 
+		{
+			var results : SwizLogger = SwizLogger.getLogger( this );
 			
 			// Build a LoggingTarget for all global, unhandled exceptions and register with the Swiz logger
 			if (loggingTarget == null) {
-				var target : TraceTarget = new TraceTarget();
+				var target : SwizTraceTarget = new SwizTraceTarget();
 				
 				target.filters			= ["*"];
-				target.level 			= LogEventLevel.ALL;
-				target.includeDate 		= true;
-				target.includeTime 		= true;
-				target.includeCategory 	= true;
-				target.includeLevel 	= true;
+				target.level 			= SwizLogEventLevel.ALL;
 				
 				loggingTarget = target;
 				loggingTarget.addLogger(results);

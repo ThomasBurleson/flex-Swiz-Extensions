@@ -107,25 +107,10 @@ package ext.swizframework.metadata
 		{
 			super.copyFrom( metadataTag );
 			
-			if( hasArg( "url" ) )
-			{
-				_url = getArg( "url" ).value;
-			}
-			
-			if( hasArg( "title" ) )
-			{
-				_title = getArg( "title" ).value;
-			}
-			
-			if( hasArg( "suspend" ) )
-			{
-				_suspend = getArg( "suspend" ).value;
-			}
-			
-			if( hasArg( "pattern" ) )
-			{
-				_suspend = getArg( "pattern" ).value;
-			}
+			if( hasArg( "url" ) )		_url = getArg( "url" ).value;
+			if( hasArg( "title" ) )		_title = getArg( "title" ).value;
+			if( hasArg( "suspend" ) )	_suspend = getArg( "suspend" ).value;
+			if( hasArg( "pattern" ) )	_suspend = getArg( "pattern" ).value;
 		}
 		
 	}

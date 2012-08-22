@@ -236,7 +236,7 @@ package ext.swizframework.processors
 		 */
 		private function autoAddLogFilter(target:Object):void {
 			var logTarget : ILoggingTarget = settings.loggingTarget as ILoggingTarget;
-			if (logTarget != null) {
+			if (logTarget == null) {
 				logTarget.filters ||= [];
 				
 				var clazzName   : String  = getQualifiedClassName( target );

@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <componentPackage>
 	
+	<component id="ChainBuild" 					class="ext.swizframework.utils.chain.ChainBuilder" />
 	<!-- Custom Processors -->
 	<component id="AbstractPresentationModel" 	class="ext.swizframework.core.AbstractPresentationModel" />
-	<component id="DeepLinkProcess" 		    class="ext.swizframework.processors.DeepLinkProcessor" />
+	<component id="DeepLinkProcessor" 		    class="ext.swizframework.processors.DeepLinkProcessor" />
 	<component id="LogProcessor" 			    class="ext.swizframework.processors.LogProcessor" />
 	<component id="GlobalExceptionLogger" 	    class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
 	<component id="Logger" 					    class="ext.swizframework.utils.logging.Logger" />	
