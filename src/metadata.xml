@@ -5,35 +5,59 @@
 
 		<context name="variable" />
 		<context name="setter" />
-		
+
 	</metadata>
-	
+
 	<metadata name="DeepLink" description="Marks this method as syncrhonized with Browser via SWFAddress">
 
 		<context name="method" />
-		
-		<attribute name="url" 
+
+		<attribute name="url"
 				   type="String"
 				   values=""
 				   defaultValue=""
-				   required="false" 
+				   required="false"
 				   description="Browser URL pattern to use to determine if method should be auto-invoked with url tokens as method arguments" />
 
-		<attribute name="title" 
+		<attribute name="title"
 				   type="String"
 				   values=""
 				   defaultValue=""
-				   required="false" 
+				   required="false"
 				   description="Title of browser when url matches" />
-				   
-		<attribute name="suspend" 
+
+		<attribute name="suspend"
 				   type="String"
 				   values="true,false"
 				   defaultValue=""
-				   required="false" 
+				   required="false"
 				   description="Used to allow method call to easily activate/deactivate the DeepLinkProcessor activity." />
-				   				   
+
 	</metadata>
-	
+
+    <metadata name="StateEventHandler" description="Marks this method as a state event handler.">
+
+        <attribute name="state"
+                   type="String"
+                   values=""
+                   defaultValue=""
+                   required="true"
+                   description="The state to link with this handler" />
+
+        <attribute name="handler"
+                   type="String"
+                   values=""
+                   defaultValue=""
+                   required="false"
+                   description="The string name of a method to link to this state change." />
+
+        <attribute name="priority"
+                   type="String"
+                   values=""
+                   defaultValue=""
+                   required="false"
+                   description="The priority of this handler in relation to other handlers for identical state. 0 is highest." />
+    </metadata>
+
 </annotations>
 
