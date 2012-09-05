@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
 <componentPackage>
-	
+
 	<component id="ChainBuild" 					class="ext.swizframework.utils.chain.ChainBuilder" />
 	<!-- Custom Processors -->
 	<component id="AbstractPresentationModel" 	class="ext.swizframework.core.AbstractPresentationModel" />
 	<component id="DeepLinkProcessor" 		    class="ext.swizframework.processors.DeepLinkProcessor" />
 	<component id="LogProcessor" 			    class="ext.swizframework.processors.LogProcessor" />
+    <component id="StateEventHandlerProcessor"  class="ext.swizframework.processors.StateEventHandlerProcessor" />
 	<component id="GlobalExceptionLogger" 	    class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
-	<component id="Logger" 					    class="ext.swizframework.utils.logging.Logger" />	
+	<component id="Logger" 					    class="ext.swizframework.utils.logging.Logger" />
 	<component id="Log4FxTarget" 			    class="com.farata.log4fx.Log4FxTarget" />
 	<component id="ThunderBoltTarget" 		    class="org.osflash.thunderbolt.ThunderBoltTarget" />
 	<component id="AsyncInterceptor" 		    class="ext.swizframework.utils.AsyncInterceptor" />
 	<component id="SWFAddressManager" 		    class="ext.swizframework.utils.SWFAddressManager" />
-	
-	
+
+
 </componentPackage>
