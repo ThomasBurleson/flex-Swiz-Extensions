@@ -35,7 +35,7 @@
 
 	</metadata>
 
-    <metadata name="StateEventHandler" description="Marks this method as a state event handler.">
+    <metadata name="StateChange" description="Marks this method as a state change handler.">
 
         <attribute name="state"
                    type="String"

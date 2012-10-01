@@ -6,7 +6,7 @@
 	<component id="AbstractPresentationModel" 	class="ext.swizframework.core.AbstractPresentationModel" />
 	<component id="DeepLinkProcessor" 		    class="ext.swizframework.processors.DeepLinkProcessor" />
 	<component id="LogProcessor" 			    class="ext.swizframework.processors.LogProcessor" />
-    <component id="StateEventHandlerProcessor"  class="ext.swizframework.processors.StateEventHandlerProcessor" />
+    <component id="StateChangeProcessor"        class="ext.swizframework.processors.StateChangeProcessor" />
 	<component id="GlobalExceptionLogger" 	    class="ext.swizframework.utils.logging.GlobalExceptionLogger" />
 	<component id="Logger" 					    class="ext.swizframework.utils.logging.Logger" />
 	<component id="Log4FxTarget" 			    class="com.farata.log4fx.Log4FxTarget" />
