@@ -1,6 +1,6 @@
 package ext.swizframework.events
 {
-	import ext.swizframework.metadata.StateEventHandlerMetadataTag;
+	import ext.swizframework.metadata.StateChangeMetadataTag;
 
 	import org.swizframework.reflection.MetadataHostMethod;
 	import org.swizframework.reflection.MethodParameter;
@@ -8,7 +8,7 @@ package ext.swizframework.events
 	/**
 	 * Data class for holding pertinent information and handling state change events.
 	 */
-    public class StateEventHandler
+    public class StateChangeHandler
     {
 		/**
 		 * The state to navigate to
@@ -43,12 +43,12 @@ package ext.swizframework.events
 		/**
 		 * The associated metadata tag
 		 */
-        public function get metadataTag():StateEventHandlerMetadataTag
+        public function get metadataTag():StateChangeMetadataTag
         {
             return _metadataTag;
         }
 
-        private var _metadataTag:StateEventHandlerMetadataTag;
+        private var _metadataTag:StateChangeMetadataTag;
 
 		/**
 		 *
@@ -57,7 +57,7 @@ package ext.swizframework.events
 		 * @param metadataTag The associated metadata tag
 		 * @param priority The priority of the handler
 		 */
-        public function StateEventHandler(view:String, handler:Function, metadataTag:StateEventHandlerMetadataTag, priority:int)
+        public function StateChangeHandler(view:String, handler:Function, metadataTag:StateChangeMetadataTag, priority:int)
         {
             _state = view;
             _handler = handler;

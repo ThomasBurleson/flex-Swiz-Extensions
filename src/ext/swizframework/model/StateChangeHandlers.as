@@ -1,13 +1,13 @@
 package ext.swizframework.model
 {
-	import ext.swizframework.events.StateEventHandler;
+	import ext.swizframework.events.StateChangeHandler;
 
 	import flash.utils.Dictionary;
 
 	/**
 	 * Collection to handle StateEventHandlers.
 	 */
-    public class StateEventHandlers
+    public class StateChangeHandlers
     {
         private const handlers:Dictionary = new Dictionary();
 
@@ -21,7 +21,7 @@ package ext.swizframework.model
 		 *
 		 * @param handler The StateEventHandler to add
 		 */
-        public function addHandler(handler:StateEventHandler):void
+        public function addHandler(handler:StateChangeHandler):void
         {
 	        var state:String = handler.state;
 

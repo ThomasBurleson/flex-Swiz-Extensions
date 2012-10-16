@@ -8,7 +8,7 @@ package ext.swizframework.metadata
 	 * Expression class to handle parsing the value of the state name. Supports
 	 * state names of String or of a public static.
 	 */
-    public class StateEventTypeExpression
+    public class StateChangeExpression
     {
         private const logger:SwizLogger = SwizLogger.getLogger(this);
 
@@ -30,7 +30,7 @@ package ext.swizframework.metadata
 		 * @param swiz The Swiz instance
 		 * @param viewStatePackages An Array of package names to include as state values
 		 */
-        public function StateEventTypeExpression(expression:String, swiz:ISwiz, viewStatePackages:Array)
+        public function StateChangeExpression(expression:String, swiz:ISwiz, viewStatePackages:Array)
         {
             this.swiz = swiz;
 
