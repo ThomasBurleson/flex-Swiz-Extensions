@@ -4,9 +4,9 @@ package ext.swizframework.metadata
 	import org.swizframework.reflection.IMetadataTag;
 
 	/**
-	 * Metadata tag for StateEvent handlers
+	 * Metadata tag for StateChange
 	 */
-    public class StateEventHandlerMetadataTag extends BaseMetadataTag
+    public class StateChangeMetadataTag extends BaseMetadataTag
     {
 		/**
 		 * The state to navigate to
@@ -39,7 +39,7 @@ package ext.swizframework.metadata
 
         private var _priority:int;
 
-        public function StateEventHandlerMetadataTag()
+        public function StateChangeMetadataTag()
         {
             defaultArgName = "state";
         }
