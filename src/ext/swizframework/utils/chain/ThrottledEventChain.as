@@ -31,7 +31,7 @@ package ext.swizframework.utils.chain
 	public class ThrottledEventChain extends EventChain
 	{
 		/**
-		 * Amount of time to idle/delay before the next step is processed...
+		 * Amount of time (msecs) to idle/delay before the next step is processed...
 		 */
 		public var idleTime : Number = 0;
 		

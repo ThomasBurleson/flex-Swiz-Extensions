@@ -95,9 +95,10 @@ package ext.swizframework.processors
             return swiz.config.defaultDispatcher == SwizConfig.LOCAL_DISPATCHER ? swiz.dispatcher : swiz.globalDispatcher;
         }
 
-        public function StateChangeProcessor(metadataNames:Array = null)
+        public function StateChangeProcessor(metadataNames:Array = null, statePackages:Array = null)
         {
             super((metadataNames == null) ? [ STATE_CHANGE ] : metadataNames, StateChangeMetadataTag);
+            this.statePackages = statePackages || [ ];
         }
 
         /**
